@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 
 const TaskSchema = new mongoose.Schema({
-    taskID: {
-        type: mongoose.Schema.Types.ObjectId,
+    taskName: {
+        type: String,
         required: true,
-        unique: true,
     },
-    projectID: {
+    projectName: {
         type: String,
         required: true,
     },
@@ -18,3 +17,5 @@ const TaskSchema = new mongoose.Schema({
         default: "In Progress",
     }
 });
+
+module.exports = mongoose.model('Task', TaskSchema);

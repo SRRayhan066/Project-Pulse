@@ -9,10 +9,13 @@ const path = require("path");
 const cors = require("cors");
 
 // internal imports
-const { errorHandler } = require('./middlewares/common/errorHandler');
+const { errorHandler } = require('./middlewares/errorHandler');
+const { checkLogin, requirePermission } = require('./middlewares/checkLogin');
+const { loginValidator, loginValidationHandler } = require('./middlewares/authValidator');
 
 // app initialization
 const app = express();
+const authRouter = require('./routers/authRouter');
 
 // dotenv configuration
 dotenv.config();
@@ -27,6 +30,7 @@ mongoose.connect('mongodb+srv://nowayhome:nowayhome@cluster0.oxoqi6z.mongodb.net
 // request body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser('top_secret_code'));
 
 // set static folder
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
@@ -54,6 +58,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // routes
+app.use('/auth', authRouter);
 
 
 // error handler

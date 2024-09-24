@@ -1,12 +1,7 @@
  const mongoose = require('mongoose');
 
 const ProjectSchema = new mongoose.Schema({
-    projectID: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        unique: true,
-    },
-    name: {
+    projectName: {
         type: String,
         required: true,
         trim: true,
@@ -15,7 +10,7 @@ const ProjectSchema = new mongoose.Schema({
         type: Array,
         default: [],
     },
-    projectManagerID: {
+    projectManagerEmail: {
         type: String,
         required: true,
     },

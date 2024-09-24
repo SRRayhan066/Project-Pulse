@@ -1,20 +1,11 @@
 const mongoose = require('mongoose');
 
 const CommentSchema = new mongoose.Schema({
-    commentID: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        unique: true,
-    },
-    projectID: {
+    projectName: {
         type: String,
         required: true,
     },
-    taskID: {
-        type: String,
-        required: true,
-    },
-    UserID: {
+    userEmail: {
         type: String,
         required: true,
     },
