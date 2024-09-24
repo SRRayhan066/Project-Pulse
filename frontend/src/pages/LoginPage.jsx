@@ -57,7 +57,7 @@ const LoginPage = () => {
                                         md:{ offset: 7, span: 9 },
                                         xs:{offset:6, span:12}
                                         }}>
-                                        <Button size='large' type='primary' htmlType='submit' block>
+                                        <Button onClick={()=>navigate('/projects')} size='large' type='primary' htmlType='submit' block>
                                             Login
                                         </Button>
                                     </Form.Item>
