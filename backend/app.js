@@ -16,6 +16,10 @@ const { loginValidator, loginValidationHandler } = require('./middlewares/authVa
 // app initialization
 const app = express();
 const authRouter = require('./routers/authRouter');
+const projectRouter = require('./routers/projectRouter');
+const taskRouter = require('./routers/taskRouter');
+const commentRouter = require('./routers/commentRouter');
+const profileRouter = require('./routers/profileRouter');
 
 // dotenv configuration
 dotenv.config();
@@ -35,8 +39,6 @@ app.use(cookieParser('top_secret_code'));
 // set static folder
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
-// parse cookies
-app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // CORS configuration
 const corsOptions = {
@@ -59,6 +61,10 @@ app.use(cors(corsOptions));
 
 // routes
 app.use('/auth', authRouter);
+app.use('/projects', projectRouter);
+app.use('/tasks', taskRouter);
+app.use('/comments', commentRouter);
+app.use('/profile', profileRouter);
 
 
 // error handler

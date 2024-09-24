@@ -12,10 +12,14 @@ const TaskSchema = new mongoose.Schema({
     assignedTo: {
         type: String,
     },
-    status: {
+    taskStatus: {
         type: String,
         default: "In Progress",
-    }
+    },
+    file: {
+        type: String,
+        default: "",
+    },
 });
 
 module.exports = mongoose.model('Task', TaskSchema);
