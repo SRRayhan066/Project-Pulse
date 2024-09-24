@@ -7,19 +7,19 @@ import { Space, Table, Tag } from 'antd';
 import { Modal, Input, Form, Radio, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
-const ProjectPage = () => {
+const TaskPage = () => {
     const columns1 = [
         {
-            title: 'Project',
-            dataIndex: 'project',
-            key: 'project',
+            title: 'Task',
+            dataIndex: 'task',
+            key: 'task',
             align: 'center',
             
         },
         {
-            title: 'Project Manager',
-            dataIndex: 'project-manager',
-            key: 'project-manager',
+            title: 'Task Handler',
+            dataIndex: 'task-handler',
+            key: 'task-handler',
             align: 'center',
             
         },
@@ -38,9 +38,6 @@ const ProjectPage = () => {
             render: (text,record)=>{
                 return(
                     <div className='flex space-x-1 justify-center items-stretch'>
-                        <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={() => navigate('/tasks')}>
-                            See Details
-                        </div>
                         <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={() => showEditModal(record)} >
                             Edit
                         </div>
@@ -54,90 +51,36 @@ const ProjectPage = () => {
         },
     ];
 
-    const columns2 = [
-        {
-            title: 'Project Managers',
-            dataIndex: 'project-manager',
-            key: 'project-manager',
-            align: 'center'
-        }
-    ];
-
     const dataSource = [
         {
             key: '1',
-            project: 'Create Web Application',
-            'project-manager': 'Md Shafikul Rahman',
+            task: 'Create Web Application',
+            'task-handler': 'Md Shafikul Rahman',
             status: 'complete'
         },
         {
-            key: '1',
-            project: 'Create Android Application',
-            'project-manager': 'Md Shafikul Rahman',
+            key: '2',
+            task: 'Create Android Application',
+            'task-handler': 'Md Shafikul Rahman',
             status: 'complete'
         },
         {
-            key: '1',
-            project: 'Create Web Application',
-            'project-manager': 'Md Shafikul Rahman',
+            key: '3',
+            task: 'Create Web Application',
+            'task-handler': 'Md Shafikul Rahman',
             status: 'complete'
         },
         {
-            key: '1',
-            project: 'Create Web Application',
-            'project-manager': 'Md Shafikul Rahman',
+            key: '4',
+            task: 'Create Web Application',
+            'task-handler': 'Md Shafikul Rahman',
             status: 'complete'
-        },
-        {
-            key: '1',
-            project: 'Create Web Application',
-            'project-manager': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-        {
-            key: '1',
-            project: 'Create Web Application',
-            'project-manager': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-        {
-            key: '1',
-            project: 'Create Web Application',
-            'project-manager': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-        {
-            key: '1',
-            project: 'Create Web Application',
-            'project-manager': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-    ]
-
-    const dataSource2 = [
-        {
-            'project-manager' : 'Md Shafikul Rahman'
-        },
-        {
-            'project-manager' : 'Fahad Pathan'
-        },
-        {
-            'project-manager' : 'Md Shafikul Rahman'
-        },
-        {
-            'project-manager' : 'Fahad Pathan'
-        },
-        {
-            'project-manager' : 'Md Shafikul Rahman'
-        },
-        {
-            'project-manager' : 'Fahad Pathan'
         },
     ]
 
     const [visible, setVisible] = useState(false);
     const [editVisible,setEditVisible] = useState(false);
-    const [projectName,setProjectName] = useState('');
+    const [taskName,setTaskName] = useState('');
     const [status, setStatus] = useState('');
 
     const navigate = useNavigate();
@@ -148,7 +91,7 @@ const ProjectPage = () => {
 
     const showEditModal = (record) =>{
         setStatus(record.status);
-        setProjectName(record.project);
+        setTaskName(record.task);
         setEditVisible(true);
     }
     
@@ -161,7 +104,7 @@ const ProjectPage = () => {
     };
 
     return (
-        <div>
+        <div >
             <div className='flex space-x-5 py-2 items-center shadow-sm justify-end px-[5vw]'>
                 <div>
                     <Avatar size="large" icon={<UserOutlined />} />
@@ -172,14 +115,14 @@ const ProjectPage = () => {
             </div>
 
             <Modal
-                title="Add Project"
+                title="Add Task"
                 visible={visible}
                 footer={null}
                 onCancel={handleCancel}
             >
                 <Form>
-                    <Form.Item label='Project Name'>
-                        <Input placeholder='Project Name'></Input>
+                    <Form.Item label='Task Name'>
+                        <Input placeholder='Task Name'></Input>
                     </Form.Item>
                     <Form.Item>
                         <div className='flex justify-end space-x-2'>
@@ -195,14 +138,14 @@ const ProjectPage = () => {
             </Modal>
 
             <Modal
-                title="Edit Project"
+                title="Edit Task"
                 visible={editVisible}
                 footer={null}
                 onCancel={handleEditCancel}
             >
                 <Form>
-                    <Form.Item label='Project Name'>
-                        <Input value={projectName} placeholder='Project Name'></Input>
+                    <Form.Item label='Task Name'>
+                        <Input value={taskName} placeholder='Project Name'></Input>
                     </Form.Item>
                     <Form.Item label='Project Name'>
                         <Radio.Group value={status}
@@ -256,17 +199,19 @@ const ProjectPage = () => {
             </div>
 
             <div className='px-[5vw] '>
-                <div className='flex space-x-3 justify-end items-center
+                <div className='flex space-x-3 justify-between items-center
                                 '>
-                    <div className='font-semibold bg-green-400 p-2 rounded-md text-black cursor-pointer' onClick={showModal}>
-                        Add Project
+                    <div className='font-serif font-semibold
+                                    sm:text-2xl
+                                    xs:text-xl'>
+                        Project Name
                     </div>
-                    <div className='font-semibold bg-emerald-400 p-2 rounded-md text-black cursor-pointer' onClick={()=>navigate('/')}>
-                        Add Project Manager
+                    <div className='font-semibold bg-green-400 p-2 rounded-md text-black cursor-pointer' onClick={showModal}>
+                        Add Task
                     </div>
                 </div>
-                <div className='my-2 
-                                lg:flex lg:flex-row lg:justify-center lg:items-start lg:space-y-0 lg:space-x-3
+                <div className='my-2
+                                lg:flex lg:flex-row lg:justify-center lg:items-stretch lg:space-y-0 lg:space-x-3
                                 xs:flex xs:flex-col xs:items-center xs:space-y-5 '>
                     <div className='border-2
                                     xl:w-[70%]
@@ -277,19 +222,93 @@ const ProjectPage = () => {
 
                         </Table>
                     </div>
-                    <div className='border-2
+                    <div className='border-2 h-[57vh]
                                     xl:w-[30%]
                                     lg:w-[20%]
                                     xs:w-[100%]'>
-                        <Table columns={columns2} dataSource={dataSource2} pagination={{ pageSize: 5 }} >
+                        <div className='h-[100%] w-[100%]  relative'>
+                            <div className='h-[85%] p-2 space-y-2 overflow-y-auto'>
+                                <div className='flex flex-col items-start justify-center'>
+                                    <div className='text-xs'>Fahad Pathan</div>
+                                    <div className='bg-slate-300 w-fit p-2 rounded-md'>
+                                        This is incoming message 1.
+                                    </div>
+                                </div>
 
-                        </Table>
+                                <div className='flex flex-col items-start justify-center'>
+                                    <div className='text-xs'>Fahad Pathan</div>
+                                    <div className='bg-slate-300 w-fit p-2 rounded-md'>
+                                        This is incoming message from Fahad Pathan.
+                                    </div>
+                                </div>
+
+                                <div className='flex flex-col items-end justify-center'>
+                                    <div className='text-xs'>Rayhan</div>
+                                    <div className='bg-green-300 w-fit p-2 rounded-md'>
+                                        This is outgoing message from S R Rayhan.
+                                    </div>
+                                </div>
+
+                                <div className='flex flex-col items-start justify-center'>
+                                    <div className='text-xs'>Fahad Pathan</div>
+                                    <div className='bg-slate-300 w-fit p-2 rounded-md'>
+                                        This is incoming message 1.
+                                    </div>
+                                </div>
+
+                                <div className='flex flex-col items-start justify-center'>
+                                    <div className='text-xs'>Fahad Pathan</div>
+                                    <div className='bg-slate-300 w-fit p-2 rounded-md'>
+                                        This is incoming message from Fahad Pathan.
+                                    </div>
+                                </div>
+
+                                <div className='flex flex-col items-end justify-center'>
+                                    <div className='text-xs'>Rayhan</div>
+                                    <div className='bg-green-300 w-fit p-2 rounded-md'>
+                                        This is outgoing message from S R Rayhan.
+                                    </div>
+                                </div>
+
+                                <div className='flex flex-col items-start justify-center'>
+                                    <div className='text-xs'>Fahad Pathan</div>
+                                    <div className='bg-slate-300 w-fit p-2 rounded-md'>
+                                        This is incoming message 1.
+                                    </div>
+                                </div>
+
+                                <div className='flex flex-col items-start justify-center'>
+                                    <div className='text-xs'>Fahad Pathan</div>
+                                    <div className='bg-slate-300 w-fit p-2 rounded-md'>
+                                        This is incoming message from Fahad Pathan.
+                                    </div>
+                                </div>
+
+                                <div className='flex flex-col items-end justify-center'>
+                                    <div className='text-xs'>Rayhan</div>
+                                    <div className='bg-green-300 w-fit p-2 rounded-md'>
+                                        This is outgoing message from S R Rayhan.
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div className='absolute bottom-1 left-0 w-full flex justify-between items-center px-2'>
+                                <div className='w-[78%]'>
+                                    <Input className='p-2'></Input>
+                                </div>
+                                <div className='font-semibold bg-black py-2 px-4 rounded-md text-white cursor-pointer'>
+                                    Send
+                                </div>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
+                
             </div>
 
         </div>
     );
 };
 
-export default ProjectPage;
+export default TaskPage;

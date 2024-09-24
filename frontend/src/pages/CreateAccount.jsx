@@ -72,7 +72,7 @@ const CreateAccount = () => {
                                         xs:{offset:6, span:12}
                                         }}>
                                         <Button size='large' type='primary' htmlType='submit' block>
-                                            Login
+                                            Register
                                         </Button>
                                     </Form.Item>
                             </ConfigProvider>
