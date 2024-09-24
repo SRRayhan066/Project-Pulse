@@ -38,13 +38,13 @@ const ProjectPage = () => {
             render: (text,record)=>{
                 return(
                     <div className='flex space-x-1 justify-center items-stretch'>
-                        <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={()=>navigate('/')}>
+                        <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center'>
                             See Details
                         </div>
-                        <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={()=>navigate('/')}>
+                        <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={() => showEditModal(record)} >
                             Edit
                         </div>
-                        <div className='font-semibold bg-red-400 p-2 rounded-md text-white cursor-pointer flex items-center justify-center' onClick={()=>navigate('/')}>
+                        <div className='font-semibold bg-red-400 p-2 rounded-md text-white cursor-pointer flex items-center justify-center'>
                             Delete
                         </div>
                     </div> 
@@ -136,15 +136,29 @@ const ProjectPage = () => {
     ]
 
     const [visible, setVisible] = useState(false);
+    const [editVisible,setEditVisible] = useState(false);
+    const [projectName,setProjectName] = useState('');
+    const [status, setStatus] = useState('');
+
     const navigate = useNavigate();
 
     const showModal = () => {
         setVisible(true); // Show the modal
     };
+
+    const showEditModal = (record) =>{
+        setStatus(record.status);
+        setProjectName(record.project);
+        setEditVisible(true);
+    }
     
     const handleCancel = () => {
         setVisible(false); // Close the modal
     };
+
+    const handleEditCancel = () =>{
+        setEditVisible(false);
+    }
 
     return (
         <div>
@@ -174,6 +188,36 @@ const ProjectPage = () => {
                             </div>
                             <div className='font-semibold bg-green-400 p-2 rounded-md text-black cursor-pointer' onClick={handleCancel}>
                                 Create
+                            </div>
+                        </div>
+                    </Form.Item>
+                </Form>
+            </Modal>
+
+            <Modal
+                title="Edit Project"
+                visible={editVisible}
+                footer={null}
+                onCancel={handleEditCancel}
+            >
+                <Form>
+                    <Form.Item label='Project Name'>
+                        <Input value={projectName} placeholder='Project Name'></Input>
+                    </Form.Item>
+                    <Form.Item label='Project Name'>
+                        <Radio.Group value={status}
+                            onChange={(e) => setStatus(e.target.value)}>
+                            <Radio.Button value='ongoing'>Ongoing</Radio.Button>
+                            <Radio.Button value='complete'>Complete</Radio.Button>
+                        </Radio.Group>
+                    </Form.Item>
+                    <Form.Item>
+                        <div className='flex justify-end space-x-2'>
+                            <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer' onClick={handleEditCancel}>
+                                Cancel
+                            </div>
+                            <div className='font-semibold bg-green-400 py-2 px-4 rounded-md text-black cursor-pointer' onClick={handleEditCancel}>
+                                Edit
                             </div>
                         </div>
                     </Form.Item>
