@@ -186,6 +186,16 @@ const ProjectPage = () => {
         }
     },[]);
 
+    const logOut = () =>{
+        axios.delete('http://localhost:5000/auth/logout', {
+            withCredentials: true,
+        })
+        .then(res=>{
+            console.log(res);
+            navigate('/');
+        }).catch(err=>console.log(err));
+    }
+
     return (
         <div>
             <div className='flex space-x-5 py-2 items-center shadow-sm justify-end px-[5vw]'>
@@ -195,7 +205,7 @@ const ProjectPage = () => {
                 <div>
                     <h2>{user.name}</h2>
                 </div>
-                <div className='font-semibold bg-black p-2 rounded-md text-white cursor-pointer' onClick={()=>navigate('/')}>
+                <div className='font-semibold bg-black p-2 rounded-md text-white cursor-pointer' onClick={logOut}>
                     Sign-out
                 </div>
             </div>
