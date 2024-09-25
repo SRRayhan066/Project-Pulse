@@ -18,12 +18,15 @@ const ProjectPage = () => {
     const [visible, setVisible] = useState(false);
     const [editVisible,setEditVisible] = useState(false);
     const [addManagerVisible,setAddManagerVisisble] = useState(false);
+    const [removedManager,setRemovedManager] = useState(false);
+    const [prAddedSuccessfully,setPrAddedSuccessfully] = useState(false);
+
     const [projectName,setProjectName] = useState('');
     const [status, setStatus] = useState('');
     const [user,setUser] = useState({ email: '', name: '', role: '' });
+    const [projectStatus,setProjectStatus] = useState({ongoing: 0, complete: 0});
     const [userList,setUserList] = useState([]);
     const [selectedManagers, setSelectedManagers] = useState([]);
-    const [removedManager,setRemovedManager] = useState(false);
     const [projectList,setProjectList] = useState([]);
 
     useEffect(()=>{
@@ -81,14 +84,23 @@ const ProjectPage = () => {
                 .then(res => {
                     console.log(res.data);  
                     const formatList = res.data;
-                    const formattedProjectList = formatList.map(pr => ({
-                         project: pr.projectName,  // Name as the label
-                         value: pr.projectName,  // Email as the value (or use a unique ID if available)
-                         'project-manager': pr.projectManagerEmail,
-                         status:pr.projectStatus
-                    }));
+                    let ong = 0, com = 0;
+                    const formattedProjectList = formatList.map(pr => {
+                        // Increment `ong` if projectStatus is 'Ongoing'
+                        if (pr.projectStatus === 'Ongoing') ong++;
+                        if (pr.projectStatus === 'Complete') com++;
+                        // Return the object for each project
+                        return {
+                            project: pr.projectName,          // Project name
+                            value: pr.projectName,            // Value (can be used for unique identification)
+                            'project-manager': pr.projectManagerEmail, // Project manager email
+                            status: pr.projectStatus          // Status of the project
+                        };
+                    });
+
                     console.log(formattedProjectList);
                     setProjectList(formattedProjectList);
+                    setProjectStatus({ongoing:ong, complete:com});
                 })
                 .catch(err => console.log(err));
                 
@@ -260,6 +272,12 @@ const ProjectPage = () => {
         .then(res => {
             console.log(res);
             setVisible(false);
+            setPrAddedSuccessfully(true);
+            const timer = setTimeout(() => {
+                setPrAddedSuccessfully(false);
+                window.location.reload();
+            }, 1500);
+            return () => clearTimeout(timer);
         })
         .catch(err => console.log(err));
     }
@@ -269,6 +287,12 @@ const ProjectPage = () => {
             {removedManager && 
                 <div className='relative flex justify-center items-center z-50'>
                     <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Removed Successfully</span>} type="success" showIcon />
+                </div>
+            }
+
+            {prAddedSuccessfully && 
+                <div className='relative flex justify-center items-center z-50'>
+                    <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Project Added Successfully</span>} type="success" showIcon />
                 </div>
             }
             
@@ -374,20 +398,23 @@ const ProjectPage = () => {
                         success={{
                             percent: 0,
                         }}
-                        format={() => <span className="text-md">137</span>}
+                        format={() => <span className="text-md">{projectList.length}</span>}
                     />
 
                     <Progress
-                        percent={60}   
+                        percent={projectStatus.ongoing*100/projectList.length}   
                         type='circle'
+                        success={{
+                            percent: 0,
+                        }}
                         format={() => <span className="text-md">Ongoing</span>}
                     />
 
                     <Progress
-                        percent={30}   
+                        percent={(projectStatus.complete)*100/projectList.length}   
                         type='circle'
                         success={{
-                            percent: 30,
+                            percent: (projectStatus.complete)*100/projectList.length,
                         }}
                         format={() => <span className="text-md">Complete</span>}
                     />
