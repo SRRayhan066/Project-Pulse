@@ -24,7 +24,7 @@ const profileRouter = require('./routers/profileRouter');
 // dotenv configuration
 dotenv.config();
 
-mongoose.connect('mongodb+srv://nowayhome:nowayhome@cluster0.oxoqi6z.mongodb.net/ProjectPulse')
+mongoose.connect('mongodb://localhost/ProjectPulse')
 .then(() => {
     console.log('database connected. You are ready to work.');
 }).catch((error) => {

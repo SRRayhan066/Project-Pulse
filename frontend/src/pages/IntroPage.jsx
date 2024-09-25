@@ -175,7 +175,7 @@ const IntroPage = () => {
                             <img className='w-[100%] h-[100%] rounded-full' src={avatar} alt='avatar'></img>
                         </div>
                         <div className='text-center my-5 space-y-1'>
-                            <h2 className='font-serif font-semibold sm:text-lg xs:text-md'>Md Shafikul Rahman</h2>
+                            <h2 className='font-serif font-semibold sm:text-lg xs:text-md'>Team Member 1</h2>
                             <h3 className='text-slate-600 text-md font-semibold'>Frontend Designer</h3>
                             <p className='text-slate-600'>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Totam laboriosam, obcaecati, nobis reiciendis sequi eos delectus iste saepe odio laudantium nihil. Placeat amet quo nesciunt deleniti illum eaque minima nulla,</p>
                         </div>
@@ -186,7 +186,7 @@ const IntroPage = () => {
                             <img className='w-[100%] h-[100%] rounded-full' src={avatar} alt='avatar'></img>
                         </div>
                         <div className='text-center my-5 space-y-1'>
-                            <h2 className='font-serif font-semibold sm:text-lg xs:text-md'>Md Shafikul Rahman</h2>
+                            <h2 className='font-serif font-semibold sm:text-lg xs:text-md'>Team Member 2</h2>
                             <h3 className='text-slate-600 text-md font-semibold'>Frontend Designer</h3>
                             <p className='text-slate-600'>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Totam laboriosam, obcaecati, nobis reiciendis sequi eos delectus iste saepe odio laudantium nihil. Placeat amet quo nesciunt deleniti illum eaque minima nulla,</p>
                         </div>
@@ -197,7 +197,7 @@ const IntroPage = () => {
                             <img className='w-[100%] h-[100%] rounded-full' src={avatar} alt='avatar'></img>
                         </div>
                         <div className='text-center my-5 space-y-1'>
-                            <h2 className='font-serif font-semibold sm:text-lg xs:text-md'>Md Shafikul Rahman</h2>
+                            <h2 className='font-serif font-semibold sm:text-lg xs:text-md'>Team Member 3</h2>
                             <h3 className='text-slate-600 text-md font-semibold'>Frontend Designer</h3>
                             <p className='text-slate-600'>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Totam laboriosam, obcaecati, nobis reiciendis sequi eos delectus iste saepe odio laudantium nihil. Placeat amet quo nesciunt deleniti illum eaque minima nulla,</p>
                         </div>
