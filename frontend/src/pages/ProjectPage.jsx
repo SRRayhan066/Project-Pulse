@@ -155,6 +155,7 @@ const ProjectPage = () => {
     };
 
     const showAddManager = () =>{
+        
         setAddManagerVisisble(true);
     }
 
@@ -191,11 +192,19 @@ const ProjectPage = () => {
                 console.log("User name : "+userInfo.name);
                 setUser(userInfo);
 
+
                 axios.get('http://localhost:5000/profile/all', {
                     withCredentials: true,
                 })
                 .then(res => {
+                    const formatList = res.data;
                     
+                    console.log(res.data);
+                    const formattedUserList = formatList.map(user => ({
+                        label: user,  // Name as the label
+                        value: user   // Name as the value (or use a unique ID if available)
+                    }));
+                    setUserList(formattedUserList);
                 })
                 .catch(err => console.log(err));
             }catch(err){
@@ -217,9 +226,9 @@ const ProjectPage = () => {
     }
 
     const optionsArray = [
-        { label: 'Option 1', value: 'option1' },
-        { label: 'Option 2', value: 'option2' },
-        { label: 'Option 3', value: 'option3' },
+        { label: 'Option 1' },
+        { label: 'Option 2' },
+        { label: 'Option 3'},
     ];
 
     return (
@@ -297,7 +306,7 @@ const ProjectPage = () => {
             >
                 <Form>
                     <Form.Item label='Managers'>
-                        <Select options={optionsArray} mode="multiple">
+                        <Select options={userList} mode="multiple">
                         </Select>
                     </Form.Item>
                     <Form.Item>
