@@ -25,7 +25,7 @@ const getUserByEmail = async (req, res, next) => {
 const getAllUsers = async (req, res, next) => {
     try {
         // Find all users, exclude the password field
-        const users = await User.find({ role: 'user' }, // Filter to exclude admin and manager
+        const users = await User.find({ role: req.params.role }, // Filter to exclude admin and manager
                                       { name: 1, email: 1, _id: 0 });
         
         // If no users are found, you can throw an error (optional)

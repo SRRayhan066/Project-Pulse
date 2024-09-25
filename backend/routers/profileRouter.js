@@ -6,7 +6,7 @@ const { getUserByEmail, updateUserRole, getAllUsers } = require('../controllers/
 
 const profileRouter = express.Router();
 
-profileRouter.get('/all', getAllUsers);
+profileRouter.get('/:role', getAllUsers);
 
 // get user by email
 profileRouter.get('/:email', getUserByEmail);

@@ -53,8 +53,7 @@ const ProjectPage = () => {
                             Delete
                         </div>
                     </div> 
-                )
-                
+                )   
             }
         },
     ];
@@ -65,6 +64,21 @@ const ProjectPage = () => {
             dataIndex: 'project-manager',
             key: 'project-manager',
             align: 'center'
+        },
+        {
+            title: 'Action',
+            dataIndex: 'action',
+            key: 'action',
+            align: 'center',
+            render: (text,record)=>{
+                return(
+                    <div className='flex space-x-1 justify-center items-stretch'>
+                        <div className='font-semibold bg-red-400 p-2 rounded-md text-white cursor-pointer flex items-center justify-center'>
+                            Remove
+                        </div>
+                    </div> 
+                )   
+            }
         }
     ];
 
@@ -118,27 +132,7 @@ const ProjectPage = () => {
             status: 'complete'
         },
     ]
-
-    const dataSource2 = [
-        {
-            'project-manager' : 'Md Shafikul Rahman'
-        },
-        {
-            'project-manager' : 'Fahad Pathan'
-        },
-        {
-            'project-manager' : 'Md Shafikul Rahman'
-        },
-        {
-            'project-manager' : 'Fahad Pathan'
-        },
-        {
-            'project-manager' : 'Md Shafikul Rahman'
-        },
-        {
-            'project-manager' : 'Fahad Pathan'
-        },
-    ]
+    const [managerDataSource,setManagerDataSource] = useState([]);
 
     const [visible, setVisible] = useState(false);
     const [editVisible,setEditVisible] = useState(false);
@@ -194,10 +188,11 @@ const ProjectPage = () => {
                 };
                 console.log("User mail : "+userInfo.email);
                 console.log("User name : "+userInfo.name);
+                console.log("User role : "+userInfo.role);
                 setUser(userInfo);
 
 
-                axios.get('http://localhost:5000/profile/all', {
+                axios.get(`http://localhost:5000/profile/user`, {
                     withCredentials: true,
                 })
                 .then(res => {
@@ -209,6 +204,23 @@ const ProjectPage = () => {
                         value: user.email   // Email as the value (or use a unique ID if available)
                     }));
                     setUserList(formattedUserList);
+                })
+                .catch(err => console.log(err));
+
+
+                axios.get(`http://localhost:5000/profile/manager`, {
+                    withCredentials: true,
+                })
+                .then(res => {
+                    const formatList = res.data;
+                    
+                    console.log(res.data);
+                    const formattedUserList = formatList.map(user => ({
+                        'project-manager': user.name,  // Name as the label
+                           // Email as the value (or use a unique ID if available)
+                    }));
+                    setManagerDataSource(formattedUserList);
+                    
                 })
                 .catch(err => console.log(err));
             }catch(err){
@@ -307,6 +319,7 @@ const ProjectPage = () => {
                 </Form>
             </Modal>
 
+            
             <Modal
                 title="Add Project Manager"
                 visible={addManagerVisible}
@@ -365,12 +378,18 @@ const ProjectPage = () => {
             <div className='px-[5vw] '>
                 <div className='flex space-x-3 justify-end items-center
                                 '>
-                    <div className='font-semibold bg-green-400 p-2 rounded-md text-black cursor-pointer' onClick={showModal}>
-                        Add Project
-                    </div>
-                    <div className='font-semibold bg-emerald-400 p-2 rounded-md text-black cursor-pointer' onClick={showAddManager}>
-                        Add Project Manager
-                    </div>
+                    {user.role==='manager' &&
+                        <div className='font-semibold bg-green-400 p-2 rounded-md text-black cursor-pointer' onClick={showModal}>
+                            Add Project
+                        </div>
+                    }
+                    
+                    {user.role==='admin' &&
+                        <div className='font-semibold bg-emerald-400 p-2 rounded-md text-black cursor-pointer' onClick={showAddManager}>
+                            Add Project Manager
+                        </div>
+                    }
+                    
                 </div>
                 <div className='my-2 
                                 lg:flex lg:flex-row lg:justify-center lg:items-start lg:space-y-0 lg:space-x-3
@@ -388,7 +407,7 @@ const ProjectPage = () => {
                                     xl:w-[30%]
                                     lg:w-[20%]
                                     xs:w-[100%]'>
-                        <Table columns={columns2} dataSource={dataSource2} pagination={{ pageSize: 5 }} >
+                        <Table columns={columns2} dataSource={managerDataSource} pagination={{ pageSize: 4 }} >
 
                         </Table>
                     </div>
