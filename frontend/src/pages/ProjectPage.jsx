@@ -6,6 +6,11 @@ import { Progress, ConfigProvider } from 'antd';
 import { Space, Table, Tag } from 'antd';
 import { Modal, Input, Form, Radio, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import {jwtDecode} from 'jwt-decode';
 
 const ProjectPage = () => {
     const columns1 = [
@@ -71,43 +76,43 @@ const ProjectPage = () => {
             status: 'complete'
         },
         {
-            key: '1',
+            key: '2',
             project: 'Create Android Application',
             'project-manager': 'Md Shafikul Rahman',
             status: 'complete'
         },
         {
-            key: '1',
+            key: '3',
             project: 'Create Web Application',
             'project-manager': 'Md Shafikul Rahman',
             status: 'complete'
         },
         {
-            key: '1',
+            key: '4',
             project: 'Create Web Application',
             'project-manager': 'Md Shafikul Rahman',
             status: 'complete'
         },
         {
-            key: '1',
+            key: '5',
             project: 'Create Web Application',
             'project-manager': 'Md Shafikul Rahman',
             status: 'complete'
         },
         {
-            key: '1',
+            key: '6',
             project: 'Create Web Application',
             'project-manager': 'Md Shafikul Rahman',
             status: 'complete'
         },
         {
-            key: '1',
+            key: '7',
             project: 'Create Web Application',
             'project-manager': 'Md Shafikul Rahman',
             status: 'complete'
         },
         {
-            key: '1',
+            key: '8',
             project: 'Create Web Application',
             'project-manager': 'Md Shafikul Rahman',
             status: 'complete'
@@ -139,6 +144,7 @@ const ProjectPage = () => {
     const [editVisible,setEditVisible] = useState(false);
     const [projectName,setProjectName] = useState('');
     const [status, setStatus] = useState('');
+    const [user,setUser] = useState({ email: '', name: '', role: '' });
 
     const navigate = useNavigate();
 
@@ -160,13 +166,46 @@ const ProjectPage = () => {
         setEditVisible(false);
     };
 
+    useEffect(()=>{
+        const token = localStorage.getItem('pulse_token');
+        console.log("The token is "+ token);
+        if(token){
+            try{
+                const decoded = jwtDecode(token);
+                const userInfo = {
+                    email: decoded.email,
+                    name: decoded.name,
+                    role: decoded.role,
+                };
+                console.log("User mail : "+userInfo.email);
+                console.log("User name : "+userInfo.name);
+                setUser(userInfo);
+            }catch(err){
+                console.log(err);
+            }
+        }
+    },[]);
+
+    const logOut = () =>{
+        axios.delete('http://localhost:5000/auth/logout', {
+            withCredentials: true,
+        })
+        .then(res=>{
+            console.log(res);
+            navigate('/');
+        }).catch(err=>console.log(err));
+    }
+
     return (
         <div>
             <div className='flex space-x-5 py-2 items-center shadow-sm justify-end px-[5vw]'>
                 <div>
                     <Avatar size="large" icon={<UserOutlined />} />
                 </div>
-                <div className='font-semibold bg-black p-2 rounded-md text-white cursor-pointer' onClick={()=>navigate('/')}>
+                <div>
+                    <h2>{user.name}</h2>
+                </div>
+                <div className='font-semibold bg-black p-2 rounded-md text-white cursor-pointer' onClick={logOut}>
                     Sign-out
                 </div>
             </div>
