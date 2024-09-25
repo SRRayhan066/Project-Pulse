@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar } from 'antd';
 import { Progress, ConfigProvider } from 'antd';
-import { Space, Table, Tag } from 'antd';
+import { Space, Table, Tag, Select } from 'antd';
 import { Modal, Input, Form, Radio, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -142,6 +142,7 @@ const ProjectPage = () => {
 
     const [visible, setVisible] = useState(false);
     const [editVisible,setEditVisible] = useState(false);
+    const [addManagerVisible,setAddManagerVisisble] = useState(false);
     const [projectName,setProjectName] = useState('');
     const [status, setStatus] = useState('');
     const [user,setUser] = useState({ email: '', name: '', role: '' });
@@ -152,6 +153,10 @@ const ProjectPage = () => {
         setVisible(true); // Show the modal
     };
 
+    const showAddManager = () =>{
+        setAddManagerVisisble(true);
+    }
+
     const showEditModal = (record) =>{
         setStatus(record.status);
         setProjectName(record.project);
@@ -160,6 +165,10 @@ const ProjectPage = () => {
     
     const handleCancel = () => {
         setVisible(false); // Close the modal
+    };
+
+    const handleAddManagerCancel = () => {
+        setAddManagerVisisble(false); // Close the modal
     };
 
     const handleEditCancel = () =>{
@@ -195,6 +204,12 @@ const ProjectPage = () => {
             navigate('/');
         }).catch(err=>console.log(err));
     }
+
+    const optionsArray = [
+        { label: 'Option 1', value: 'option1' },
+        { label: 'Option 2', value: 'option2' },
+        { label: 'Option 3', value: 'option3' },
+    ];
 
     return (
         <div>
@@ -263,6 +278,30 @@ const ProjectPage = () => {
                 </Form>
             </Modal>
 
+            <Modal
+                title="Add Project Manager"
+                visible={addManagerVisible}
+                footer={null}
+                onCancel={handleAddManagerCancel}
+            >
+                <Form>
+                    <Form.Item label='Managers'>
+                        <Select options={optionsArray} mode="multiple">
+                        </Select>
+                    </Form.Item>
+                    <Form.Item>
+                        <div className='flex justify-end space-x-2'>
+                            <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer' onClick={handleAddManagerCancel}>
+                                Cancel
+                            </div>
+                            <div className='font-semibold bg-green-400 py-2 px-4 rounded-md text-black cursor-pointer' onClick={handleAddManagerCancel}>
+                                Add
+                            </div>
+                        </div>
+                    </Form.Item>
+                </Form>
+            </Modal>
+
             <div className='flex justify-center items-center my-5 '>     
                 <div className='border-slate-300 border-2 p-2 rounded-md shadow-sm flex justify-center items-center
                                 sm:space-x-5
@@ -300,7 +339,7 @@ const ProjectPage = () => {
                     <div className='font-semibold bg-green-400 p-2 rounded-md text-black cursor-pointer' onClick={showModal}>
                         Add Project
                     </div>
-                    <div className='font-semibold bg-emerald-400 p-2 rounded-md text-black cursor-pointer' onClick={()=>navigate('/')}>
+                    <div className='font-semibold bg-emerald-400 p-2 rounded-md text-black cursor-pointer' onClick={showAddManager}>
                         Add Project Manager
                     </div>
                 </div>
