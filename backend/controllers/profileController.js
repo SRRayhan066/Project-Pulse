@@ -21,5 +21,22 @@ const getUserByEmail = async (req, res, next) => {
     }
 }
 
+// update user role by email
+const updateUserRole = async (req, res, next) => {
+    try {
+        const user = await User.findOneAndUpdate({ email: req.params.email }, { role: req.body.role }, { new: true }).select('-password');
+        if (!user) {
+            const error = new Error("User not found");
+            error.status = 404;
+            throw error;
+        } else {
+            res.status(200).json(user);
+        }
+    }
+    catch (error) {
+        next(error);
+    }
+}
+
 // export
-module.exports = { getUserByEmail };
+module.exports = { getUserByEmail, updateUserRole };
