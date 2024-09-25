@@ -21,6 +21,27 @@ const getUserByEmail = async (req, res, next) => {
     }
 }
 
+//Get All users
+const getAllUsers = async (req, res, next) => {
+    try {
+        // Find all users, exclude the password field
+        const users = await User.find();
+        
+        // If no users are found, you can throw an error (optional)
+        if (!users || users.length === 0) {
+            const error = new Error("No users found");
+            error.status = 400;
+            throw error;
+        }
+
+        // Send the list of users as the response
+        res.status(200).json(users);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 // update user role by email
 const updateUserRole = async (req, res, next) => {
     try {
@@ -39,4 +60,4 @@ const updateUserRole = async (req, res, next) => {
 }
 
 // export
-module.exports = { getUserByEmail, updateUserRole };
+module.exports = { getUserByEmail, updateUserRole, getAllUsers };
