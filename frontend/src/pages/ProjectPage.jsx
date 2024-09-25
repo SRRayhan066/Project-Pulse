@@ -147,7 +147,7 @@ const ProjectPage = () => {
                         <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={() => showEditModal(record)} >
                             Edit
                         </div>
-                        <div className='font-semibold bg-red-400 p-2 rounded-md text-white cursor-pointer flex items-center justify-center'>
+                        <div className='font-semibold bg-red-400 p-2 rounded-md text-white cursor-pointer flex items-center justify-center' onClick={() => deleteAProject(record)}>
                             Delete
                         </div>
                     </div> 
@@ -280,6 +280,22 @@ const ProjectPage = () => {
             return () => clearTimeout(timer);
         })
         .catch(err => console.log(err));
+    }
+
+    const deleteAProject = (record) =>{
+        console.log(record.value);
+        axios.delete(`http://localhost:5000/projects/delete/${record.value}`, {
+            withCredentials: true,
+        })
+        .then(res=>{
+            console.log(res);
+            setRemovedManager(true);
+            const timer = setTimeout(() => {
+                setRemovedManager(false);
+                window.location.reload();
+            }, 1500);
+            return () => clearTimeout(timer);
+        }).catch(err=>console.log(err));
     }
 
     return (
