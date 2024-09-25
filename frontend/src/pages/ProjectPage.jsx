@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar } from 'antd';
-import { Progress, ConfigProvider } from 'antd';
+import { Progress, ConfigProvider, Alert } from 'antd';
 import { Space, Table, Tag, Select } from 'antd';
 import { Modal, Input, Form, Radio, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,73 @@ import Cookies from 'js-cookie';
 import {jwtDecode} from 'jwt-decode';
 
 const ProjectPage = () => {
+    const [managerDataSource,setManagerDataSource] = useState([]);
+
+    const [visible, setVisible] = useState(false);
+    const [editVisible,setEditVisible] = useState(false);
+    const [addManagerVisible,setAddManagerVisisble] = useState(false);
+    const [projectName,setProjectName] = useState('');
+    const [status, setStatus] = useState('');
+    const [user,setUser] = useState({ email: '', name: '', role: '' });
+    const [userList,setUserList] = useState([]);
+    const [selectedManagers, setSelectedManagers] = useState([]);
+    const [removedManager,setRemovedManager] = useState(false);
+
+    useEffect(()=>{
+        const token = localStorage.getItem('pulse_token');
+        console.log("The token is "+ token);
+        if(token){
+            try{
+                const decoded = jwtDecode(token);
+                const userInfo = {
+                    email: decoded.email,
+                    name: decoded.name,
+                    role: decoded.role,
+                };
+                console.log("User mail : "+userInfo.email);
+                console.log("User name : "+userInfo.name);
+                console.log("User role : "+userInfo.role);
+                setUser(userInfo);
+
+
+                axios.get(`http://localhost:5000/profile/user`, {
+                    withCredentials: true,
+                })
+                .then(res => {
+                    const formatList = res.data;
+                    
+                    console.log(res.data);
+                    const formattedUserList = formatList.map(user => ({
+                        label: user.name,  // Name as the label
+                        value: user.email   // Email as the value (or use a unique ID if available)
+                    }));
+                    setUserList(formattedUserList);
+                })
+                .catch(err => console.log(err));
+
+
+                axios.get(`http://localhost:5000/profile/manager`, {
+                    withCredentials: true,
+                })
+                .then(res => {
+                    const formatList = res.data;
+                    
+                    console.log(res.data);
+                    const formattedUserList = formatList.map(user => ({
+                        'project-manager': user.name,  // Name as the label
+                         value: user.email  // Email as the value (or use a unique ID if available)
+                    }));
+                    setManagerDataSource(formattedUserList);
+                    
+                })
+                .catch(err => console.log(err));
+            }catch(err){
+                console.log(err);
+            }
+        }
+
+
+    },[]);
     const columns1 = [
         {
             title: 'Project',
@@ -70,14 +137,18 @@ const ProjectPage = () => {
             dataIndex: 'action',
             key: 'action',
             align: 'center',
+            className: user.role === 'admin' ? '' : 'hidden',
             render: (text,record)=>{
-                return(
-                    <div className='flex space-x-1 justify-center items-stretch'>
-                        <div className='font-semibold bg-red-400 p-2 rounded-md text-white cursor-pointer flex items-center justify-center'>
-                            Remove
+                if (user.role === 'admin') {
+                    return (
+                        <div className='flex space-x-1 justify-center items-stretch'>
+                            <div className='font-semibold bg-red-400 p-2 rounded-md text-white cursor-pointer flex items-center justify-center' onClick={() => removeFromManager(record)}>
+                                Remove
+                            </div>
                         </div>
-                    </div> 
-                )   
+                    );
+                }
+                return null;   
             }
         }
     ];
@@ -132,16 +203,7 @@ const ProjectPage = () => {
             status: 'complete'
         },
     ]
-    const [managerDataSource,setManagerDataSource] = useState([]);
-
-    const [visible, setVisible] = useState(false);
-    const [editVisible,setEditVisible] = useState(false);
-    const [addManagerVisible,setAddManagerVisisble] = useState(false);
-    const [projectName,setProjectName] = useState('');
-    const [status, setStatus] = useState('');
-    const [user,setUser] = useState({ email: '', name: '', role: '' });
-    const [userList,setUserList] = useState([]);
-    const [selectedManagers, setSelectedManagers] = useState([]);
+    
     // const [projectName,setProjectName] = useState('');
 
     const navigate = useNavigate();
@@ -160,7 +222,7 @@ const ProjectPage = () => {
 
     const handleProjectName = (event) =>{
         setProjectName(event.target.value);
-        console.log("Bal : "+projectName);
+        console.log(projectName);
     }
 
     const showEditModal = (record) =>{
@@ -181,61 +243,7 @@ const ProjectPage = () => {
         setEditVisible(false);
     };
 
-    useEffect(()=>{
-        const token = localStorage.getItem('pulse_token');
-        console.log("The token is "+ token);
-        if(token){
-            try{
-                const decoded = jwtDecode(token);
-                const userInfo = {
-                    email: decoded.email,
-                    name: decoded.name,
-                    role: decoded.role,
-                };
-                console.log("User mail : "+userInfo.email);
-                console.log("User name : "+userInfo.name);
-                console.log("User role : "+userInfo.role);
-                setUser(userInfo);
-
-
-                axios.get(`http://localhost:5000/profile/user`, {
-                    withCredentials: true,
-                })
-                .then(res => {
-                    const formatList = res.data;
-                    
-                    console.log(res.data);
-                    const formattedUserList = formatList.map(user => ({
-                        label: user.name,  // Name as the label
-                        value: user.email   // Email as the value (or use a unique ID if available)
-                    }));
-                    setUserList(formattedUserList);
-                })
-                .catch(err => console.log(err));
-
-
-                axios.get(`http://localhost:5000/profile/manager`, {
-                    withCredentials: true,
-                })
-                .then(res => {
-                    const formatList = res.data;
-                    
-                    console.log(res.data);
-                    const formattedUserList = formatList.map(user => ({
-                        'project-manager': user.name,  // Name as the label
-                           // Email as the value (or use a unique ID if available)
-                    }));
-                    setManagerDataSource(formattedUserList);
-                    
-                })
-                .catch(err => console.log(err));
-            }catch(err){
-                console.log(err);
-            }
-        }
-
-
-    },[]);
+    
 
     const logOut = () =>{
         axios.delete('http://localhost:5000/auth/logout', {
@@ -244,6 +252,22 @@ const ProjectPage = () => {
         .then(res=>{
             console.log(res);
             navigate('/');
+        }).catch(err=>console.log(err));
+    }
+
+    const removeFromManager = (record) =>{
+        console.log(record.value);
+        axios.patch(`http://localhost:5000/profile/${record.value}`,{role:'user'}, {
+            withCredentials: true,
+        })
+        .then(res=>{
+            console.log(res);
+            setRemovedManager(true);
+            const timer = setTimeout(() => {
+                setRemovedManager(false);
+                window.location.reload();
+            }, 1500);
+            return () => clearTimeout(timer);
         }).catch(err=>console.log(err));
     }
 
@@ -274,6 +298,13 @@ const ProjectPage = () => {
 
     return (
         <div>
+            {removedManager && 
+                <div className='relative flex justify-center items-center z-50'>
+                    <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Removed Successfully</span>} type="success" showIcon />
+                </div>
+            }
+            
+
             <div className='flex space-x-5 py-2 items-center shadow-sm justify-end px-[5vw]'>
                 <div>
                     <Avatar size="large" icon={<UserOutlined />} />
