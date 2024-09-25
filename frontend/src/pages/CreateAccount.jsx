@@ -33,7 +33,7 @@ const CreateAccount = () => {
         <div>
             {show && (
                 <div className='relative flex justify-center items-center z-50'>
-                    <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Sent Successfully</span>} type="success" showIcon />
+                    <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Registration Successfully</span>} type="success" showIcon />
                 </div>
             )}
             <div className='flex justify-center items-center h-[100vh] w-[100vw] bg-green-100'>

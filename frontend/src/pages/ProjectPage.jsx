@@ -144,12 +144,18 @@ const ProjectPage = () => {
                         <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={() => navigate('/tasks')}>
                             See Details
                         </div>
-                        <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={() => showEditModal(record)} >
-                            Edit
-                        </div>
-                        <div className='font-semibold bg-red-400 p-2 rounded-md text-white cursor-pointer flex items-center justify-center' onClick={() => deleteAProject(record)}>
-                            Delete
-                        </div>
+                        {user.role==='manager' && 
+                            <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={() => showEditModal(record)} >
+                                Edit
+                            </div>
+                        }
+                        {user.role==='manager' && 
+                            <div className='font-semibold bg-red-400 p-2 rounded-md text-white cursor-pointer flex items-center justify-center' onClick={() => deleteAProject(record)}>
+                                Delete
+                            </div>
+                        }
+                        
+                        
                     </div> 
                 )   
             }
@@ -298,6 +304,22 @@ const ProjectPage = () => {
         }).catch(err=>console.log(err));
     }
 
+    const updateAProject = (record) =>{
+        console.log(record);
+        axios.patch(`http://localhost:5000/projects/update/status/${record.projectName}`,{projectStatus:record.status}, {
+            withCredentials: true,
+        })
+        .then(res=>{
+            console.log(res);
+            setRemovedManager(true);
+            const timer = setTimeout(() => {
+                setRemovedManager(false);
+                window.location.reload();
+            }, 1500);
+            return () => clearTimeout(timer);
+        }).catch(err=>console.log(err));
+    }
+
     return (
         <div>
             {removedManager && 
@@ -356,13 +378,13 @@ const ProjectPage = () => {
             >
                 <Form>
                     <Form.Item label='Project Name'>
-                        <Input value={projectName} placeholder='Project Name'></Input>
+                        <Input value={projectName} placeholder='Project Name' disabled></Input>
                     </Form.Item>
-                    <Form.Item label='Project Name'>
+                    <Form.Item label='Project Status'>
                         <Radio.Group value={status}
                             onChange={(e) => setStatus(e.target.value)}>
-                            <Radio.Button value='ongoing'>Ongoing</Radio.Button>
-                            <Radio.Button value='complete'>Complete</Radio.Button>
+                            <Radio.Button value='Ongoing'>Ongoing</Radio.Button>
+                            <Radio.Button value='Complete'>Complete</Radio.Button>
                         </Radio.Group>
                     </Form.Item>
                     <Form.Item>
@@ -370,8 +392,8 @@ const ProjectPage = () => {
                             <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer' onClick={handleEditCancel}>
                                 Cancel
                             </div>
-                            <div className='font-semibold bg-green-400 py-2 px-4 rounded-md text-black cursor-pointer' onClick={handleEditCancel}>
-                                Edit
+                            <div className='font-semibold bg-green-400 py-2 px-4 rounded-md text-black cursor-pointer' onClick={()=>updateAProject({projectName,status})}>
+                                Update
                             </div>
                         </div>
                     </Form.Item>
