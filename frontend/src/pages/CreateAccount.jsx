@@ -4,9 +4,25 @@ import { Form, Input, Button, Alert, ConfigProvider } from 'antd';
 import registrationImage from '../assets/RegistrationImage.jpg';
 import { Row, Col } from 'antd';
 
+import axios from 'axios';
+
 const CreateAccount = () => {
     const [show,setShow] = useState(false);
     const navigate = useNavigate();
+
+    const handleSubmit = (event) =>{
+        const { name, email, password } = event;
+        const dataToSend = { name, email, password };
+        console.log(dataToSend);
+        axios.post('http://localhost:5000/auth/register', dataToSend, {
+            withCredentials: true,
+        })
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => console.log(err));
+    }
+    
     return (
         <div>
             {show && (
@@ -28,7 +44,7 @@ const CreateAccount = () => {
                     <div className=' p-8 flex flex-col justify-center
                                     lg:w-[50%]
                                     md:w-[65%]'>
-                        <Form autoComplete='off' labelCol={{xs:{span:24}}} labelAlign='left'>
+                        <Form onFinish={handleSubmit} autoComplete='off' labelCol={{xs:{span:24}}} labelAlign='left'>
                             <Form.Item className='my-3' label='Name' name='name' rules={[
                                 {required:true,message:'Enter your username'},
                                 {whitespace: true},
