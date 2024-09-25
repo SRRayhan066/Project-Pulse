@@ -25,7 +25,8 @@ const getUserByEmail = async (req, res, next) => {
 const getAllUsers = async (req, res, next) => {
     try {
         // Find all users, exclude the password field
-        const users = await User.find();
+        const users = await User.find({ role: 'user' }, // Filter to exclude admin and manager
+                                      { name: 1, _id: 0 });
         
         // If no users are found, you can throw an error (optional)
         if (!users || users.length === 0) {
@@ -34,8 +35,8 @@ const getAllUsers = async (req, res, next) => {
             throw error;
         }
 
-        // Send the list of users as the response
-        res.status(200).json(users);
+        const names = users.map(user => user.name);
+        res.status(200).json(names);
     } catch (error) {
         next(error);
     }

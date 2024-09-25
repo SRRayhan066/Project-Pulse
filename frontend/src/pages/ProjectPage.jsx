@@ -146,6 +146,7 @@ const ProjectPage = () => {
     const [projectName,setProjectName] = useState('');
     const [status, setStatus] = useState('');
     const [user,setUser] = useState({ email: '', name: '', role: '' });
+    const [userList,setUserList] = useState([]);
 
     const navigate = useNavigate();
 
@@ -189,10 +190,20 @@ const ProjectPage = () => {
                 console.log("User mail : "+userInfo.email);
                 console.log("User name : "+userInfo.name);
                 setUser(userInfo);
+
+                axios.get('http://localhost:5000/profile/all', {
+                    withCredentials: true,
+                })
+                .then(res => {
+                    
+                })
+                .catch(err => console.log(err));
             }catch(err){
                 console.log(err);
             }
         }
+
+
     },[]);
 
     const logOut = () =>{
