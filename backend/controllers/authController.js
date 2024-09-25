@@ -44,6 +44,7 @@ const login = async (req, res, next) => {
           res.status(200).json({
             message: "Login successful.",
             user: userObject,
+            token: token,
           });
         } else {
           next(createError(400, "Invalid credentials."));
