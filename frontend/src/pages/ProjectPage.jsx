@@ -24,6 +24,7 @@ const ProjectPage = () => {
     const [userList,setUserList] = useState([]);
     const [selectedManagers, setSelectedManagers] = useState([]);
     const [removedManager,setRemovedManager] = useState(false);
+    const [projectList,setProjectList] = useState([]);
 
     useEffect(()=>{
         const token = localStorage.getItem('pulse_token');
@@ -73,6 +74,24 @@ const ProjectPage = () => {
                     
                 })
                 .catch(err => console.log(err));
+
+                axios.get(`http://localhost:5000/projects/all`, {
+                    withCredentials: true,
+                })
+                .then(res => {
+                    console.log(res.data);  
+                    const formatList = res.data;
+                    const formattedProjectList = formatList.map(pr => ({
+                         project: pr.projectName,  // Name as the label
+                         value: pr.projectName,  // Email as the value (or use a unique ID if available)
+                         'project-manager': pr.projectManagerEmail,
+                         status:pr.projectStatus
+                    }));
+                    console.log(formattedProjectList);
+                    setProjectList(formattedProjectList);
+                })
+                .catch(err => console.log(err));
+                
             }catch(err){
                 console.log(err);
             }
@@ -152,57 +171,6 @@ const ProjectPage = () => {
             }
         }
     ];
-
-    const dataSource = [
-        {
-            key: '1',
-            project: 'Create Web Application',
-            'project-manager': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-        {
-            key: '2',
-            project: 'Create Android Application',
-            'project-manager': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-        {
-            key: '3',
-            project: 'Create Web Application',
-            'project-manager': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-        {
-            key: '4',
-            project: 'Create Web Application',
-            'project-manager': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-        {
-            key: '5',
-            project: 'Create Web Application',
-            'project-manager': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-        {
-            key: '6',
-            project: 'Create Web Application',
-            'project-manager': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-        {
-            key: '7',
-            project: 'Create Web Application',
-            'project-manager': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-        {
-            key: '8',
-            project: 'Create Web Application',
-            'project-manager': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-    ]
     
     // const [projectName,setProjectName] = useState('');
 
@@ -450,7 +418,7 @@ const ProjectPage = () => {
                                     lg:w-[80%]
                                     xs:w-[100%]
                                     '>
-                        <Table columns={columns1} dataSource={dataSource} pagination={{ pageSize: 4 }} scroll={{x:'40vw'}}>
+                        <Table columns={columns1} dataSource={projectList} pagination={{ pageSize: 4 }} scroll={{x:'40vw'}}>
 
                         </Table>
                     </div>
