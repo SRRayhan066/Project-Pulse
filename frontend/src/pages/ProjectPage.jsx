@@ -142,6 +142,7 @@ const ProjectPage = () => {
     const [user,setUser] = useState({ email: '', name: '', role: '' });
     const [userList,setUserList] = useState([]);
     const [selectedManagers, setSelectedManagers] = useState([]);
+    // const [projectName,setProjectName] = useState('');
 
     const navigate = useNavigate();
 
@@ -156,6 +157,11 @@ const ProjectPage = () => {
     const handleSelectChange = (value) => {
         setSelectedManagers(value); // Update selected managers
     };
+
+    const handleProjectName = (event) =>{
+        setProjectName(event.target.value);
+        console.log("Bal : "+projectName);
+    }
 
     const showEditModal = (record) =>{
         setStatus(record.status);
@@ -252,6 +258,20 @@ const ProjectPage = () => {
         }).catch(err=>console.log(err));
     }
 
+    const addNewProject = () =>{
+        console.log(projectName);
+        const dataToSend = { projectName:projectName, projectManagerEmail:user.email, projectStatus:'Ongoing' };
+        console.log(dataToSend);
+        axios.post('http://localhost:5000/projects/create', dataToSend, {
+            withCredentials: true,
+        })
+        .then(res => {
+            console.log(res);
+            setVisible(false);
+        })
+        .catch(err => console.log(err));
+    }
+
     return (
         <div>
             <div className='flex space-x-5 py-2 items-center shadow-sm justify-end px-[5vw]'>
@@ -274,14 +294,14 @@ const ProjectPage = () => {
             >
                 <Form>
                     <Form.Item label='Project Name'>
-                        <Input placeholder='Project Name'></Input>
+                        <Input placeholder='Project Name' onChange={handleProjectName}></Input>
                     </Form.Item>
                     <Form.Item>
                         <div className='flex justify-end space-x-2'>
                             <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer' onClick={handleCancel}>
                                 Cancel
                             </div>
-                            <div className='font-semibold bg-green-400 p-2 rounded-md text-black cursor-pointer' onClick={handleCancel}>
+                            <div className='font-semibold bg-green-400 p-2 rounded-md text-black cursor-pointer' onClick={addNewProject}>
                                 Create
                             </div>
                         </div>
