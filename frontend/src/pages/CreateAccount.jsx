@@ -18,7 +18,13 @@ const CreateAccount = () => {
             withCredentials: true,
         })
         .then(res => {
+            setShow(true);
             console.log(res);
+            const timer = setTimeout(() => {
+                setShow(false);
+                navigate('/login');
+            }, 2000);
+            return () => clearTimeout(timer);
         })
         .catch(err => console.log(err));
     }
@@ -27,7 +33,7 @@ const CreateAccount = () => {
         <div>
             {show && (
                 <div className='relative flex justify-center items-center z-50'>
-                <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Sent Successfully</span>} type="success" showIcon />
+                    <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Sent Successfully</span>} type="success" showIcon />
                 </div>
             )}
             <div className='flex justify-center items-center h-[100vh] w-[100vw] bg-green-100'>

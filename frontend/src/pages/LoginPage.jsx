@@ -6,15 +6,37 @@ import registrationImage from '../assets/RegistrationImage.jpg';
 import loginImage from '../assets/loginImage.jpg';
 import { Row, Col } from 'antd';
 
+import axios from 'axios';
 
 const LoginPage = () => {
     const [show,setShow] = useState(false);
     const navigate = useNavigate();
+
+    const handleSubmit = (event) =>{
+        const { email, password } = event;
+        const dataToSend = { email, password };
+        console.log(dataToSend);
+        axios.post('http://localhost:5000/auth/login', dataToSend, {
+            withCredentials: true,
+        })
+        .then(res => {
+            setShow(true);
+            console.log(res.data.token);
+            localStorage.setItem('pulse_token',res.data.token);
+            const timer = setTimeout(() => {
+                setShow(false);
+                navigate('/projects');
+            }, 2000);
+            return () => clearTimeout(timer);
+        })
+        .catch(err => console.log(err));
+    }
+
     return (
         <div>
             {show && (
                 <div className='relative flex justify-center items-center z-50'>
-                <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Sent Successfully</span>} type="success" showIcon />
+                <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Login Successfully</span>} type="success" showIcon />
                 </div>
             )}
             <div className='flex justify-center items-center h-[100vh] w-[100vw] bg-green-100'>
@@ -31,8 +53,7 @@ const LoginPage = () => {
                     <div className=' p-8 flex flex-col justify-center
                                     lg:w-[50%]
                                     md:w-[65%]'>
-                        <Form autoComplete='off' labelCol={{xs:{span:24}}} labelAlign='left'>
-                            
+                        <Form onFinish={handleSubmit} autoComplete='off' labelCol={{xs:{span:24}}} labelAlign='left'>    
 
                             <Form.Item label='E-mail' name='email' rules={[
                                 {required:true,message:'Enter your e-mail'},
@@ -57,7 +78,7 @@ const LoginPage = () => {
                                         md:{ offset: 7, span: 9 },
                                         xs:{offset:6, span:12}
                                         }}>
-                                        <Button onClick={()=>navigate('/projects')} size='large' type='primary' htmlType='submit' block>
+                                        <Button size='large' type='primary' htmlType='submit' block>
                                             Login
                                         </Button>
                                     </Form.Item>
