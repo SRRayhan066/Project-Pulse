@@ -147,6 +147,7 @@ const ProjectPage = () => {
     const [status, setStatus] = useState('');
     const [user,setUser] = useState({ email: '', name: '', role: '' });
     const [userList,setUserList] = useState([]);
+    const [selectedManagers, setSelectedManagers] = useState([]);
 
     const navigate = useNavigate();
 
@@ -155,9 +156,12 @@ const ProjectPage = () => {
     };
 
     const showAddManager = () =>{
-        
         setAddManagerVisisble(true);
     }
+
+    const handleSelectChange = (value) => {
+        setSelectedManagers(value); // Update selected managers
+    };
 
     const showEditModal = (record) =>{
         setStatus(record.status);
@@ -201,8 +205,8 @@ const ProjectPage = () => {
                     
                     console.log(res.data);
                     const formattedUserList = formatList.map(user => ({
-                        label: user,  // Name as the label
-                        value: user   // Name as the value (or use a unique ID if available)
+                        label: user.name,  // Name as the label
+                        value: user.email   // Email as the value (or use a unique ID if available)
                     }));
                     setUserList(formattedUserList);
                 })
@@ -225,11 +229,16 @@ const ProjectPage = () => {
         }).catch(err=>console.log(err));
     }
 
-    const optionsArray = [
-        { label: 'Option 1' },
-        { label: 'Option 2' },
-        { label: 'Option 3'},
-    ];
+    const addAsManager = () =>{
+        console.log(selectedManagers);
+        axios.patch(`http://localhost:5000/profile/${selectedManagers}`,{role:'manager'}, {
+            withCredentials: true,
+        })
+        .then(res=>{
+            console.log(res);
+            setAddManagerVisisble(false);
+        }).catch(err=>console.log(err));
+    }
 
     return (
         <div>
@@ -306,7 +315,7 @@ const ProjectPage = () => {
             >
                 <Form>
                     <Form.Item label='Managers'>
-                        <Select options={userList} mode="multiple">
+                        <Select options={userList} onChange={handleSelectChange} >
                         </Select>
                     </Form.Item>
                     <Form.Item>
@@ -314,7 +323,7 @@ const ProjectPage = () => {
                             <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer' onClick={handleAddManagerCancel}>
                                 Cancel
                             </div>
-                            <div className='font-semibold bg-green-400 py-2 px-4 rounded-md text-black cursor-pointer' onClick={handleAddManagerCancel}>
+                            <div className='font-semibold bg-green-400 py-2 px-4 rounded-md text-black cursor-pointer' onClick={addAsManager}>
                                 Add
                             </div>
                         </div>
