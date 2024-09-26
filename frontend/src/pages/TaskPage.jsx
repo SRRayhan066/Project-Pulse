@@ -71,14 +71,16 @@ const TaskPage = () => {
     const [editVisible,setEditVisible] = useState(false);
     const [removedManager,setRemovedManager] = useState(false);
     const [taskName,setTaskName] = useState('');
-    const [status, setStatus] = useState('');
-    const [selectedStudent,setSelectedStudent] = useState({name: '' , email: ''});
+    const [status, setStatus] = useState(null);
+    const [selectedStudent,setSelectedStudent] = useState({name: null , email: null});
     const [taskAddedSuccessfully,setTaskAddedSuccessfully] = useState(false);
     const {projectName, user, userList} = location.state || {};
     const [studentList,setStudentList] = useState([]);
     const [taskList,setTaskList] = useState([]);
 
     const [allStudents,setAllStudents] = useState([{name:'',email:''}]);
+
+    const [currentStudent,setCurrentStudent] = useState(null);
 
     const addStudent = (newStudent) => {
         setAllStudents(prevStudents => [...prevStudents, newStudent]);
@@ -149,6 +151,7 @@ const TaskPage = () => {
     const showEditModal = (record) =>{
         setStatus(record.status);
         setTaskName(record.task);
+        setCurrentStudent(record['task-handler']);
         setEditVisible(true);
     }
     
@@ -229,6 +232,35 @@ const TaskPage = () => {
         }).catch(err=>console.log(err));
     }
 
+    const editTask = () =>{
+        console.log("Bal er current student "+currentStudent);
+        axios.patch(`http://localhost:5000/tasks/update/status/${taskName}`,{taskStatus:status,assignedTo:selectedStudent.value}, {
+            withCredentials: true,
+        })
+        .then(res=>{
+            console.log(res);
+            if(selectedStudent.name!==currentStudent){
+                // console.log("selected :: "+selectedStudent.name);
+                // console.log("current :: "+currentStudent)
+                axios.patch(`http://localhost:5000/profile/working/${localStorage.getItem(currentStudent)}`,{working:false}, {
+                    withCredentials: true,
+                })
+                .then(res=>{
+                    console.log(res);
+                }).catch(err=>console.log(err));
+
+                axios.patch(`http://localhost:5000/profile/working/${selectedStudent.value}`,{working:true}, {
+                    withCredentials: true,
+                })
+                .then(res=>{
+                    console.log(res);
+                }).catch(err=>console.log(err));
+            }
+            setEditVisible(false);
+            window.location.reload();
+        }).catch(err=>console.log(err));
+    }
+
     return (
         <div >
             {taskAddedSuccessfully && 
@@ -289,14 +321,18 @@ const TaskPage = () => {
                 onCancel={handleEditCancel}
             >
                 <Form>
-                    <Form.Item label='Task Name'>
-                        <Input value={taskName} placeholder='Project Name'></Input>
+                    <Form.Item label='Task Name' >
+                        <Input value={taskName} placeholder='Project Name' disabled></Input>
                     </Form.Item>
-                    <Form.Item label='Project Name'>
+                    <Form.Item label='Assigned to'>
+                        <Select options={studentList} onChange={handleSelectChange} placeholder='Choose student' labelInValue>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item label='Project Status'>
                         <Radio.Group value={status}
                             onChange={(e) => setStatus(e.target.value)}>
-                            <Radio.Button value='ongoing'>Ongoing</Radio.Button>
-                            <Radio.Button value='complete'>Complete</Radio.Button>
+                            <Radio.Button value='Ongoing'>Ongoing</Radio.Button>
+                            <Radio.Button value='Complete'>Complete</Radio.Button>
                         </Radio.Group>
                     </Form.Item>
                     <Form.Item>
@@ -304,7 +340,7 @@ const TaskPage = () => {
                             <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer' onClick={handleEditCancel}>
                                 Cancel
                             </div>
-                            <div className='font-semibold bg-green-400 py-2 px-4 rounded-md text-black cursor-pointer' onClick={handleEditCancel}>
+                            <div className='font-semibold bg-green-400 py-2 px-4 rounded-md text-black cursor-pointer' onClick={editTask}>
                                 Edit
                             </div>
                         </div>

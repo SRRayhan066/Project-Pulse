@@ -111,7 +111,7 @@ const ProjectPage = () => {
                         return {
                             project: pr.projectName,
                             value: pr.projectName,
-                            'project-manager': pr.projectManagerEmail,
+                            'project-manager': pr.projectManagerName,
                             status: pr.projectStatus
                         };
                     });
