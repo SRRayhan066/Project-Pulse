@@ -103,7 +103,7 @@ const ProjectPage = () => {
                 let ong = 0, com = 0;
 
                 const formattedProjectList = formatList
-                    .filter(pr => user.role === 'admin' || pr.projectManagerEmail === user.email)
+                    .filter(pr => user.role === 'admin' || pr.projectManagerEmail === user.email || pr.allowedUsers.includes(user.name))
                     .map(pr => {
                         if (pr.projectStatus === 'Ongoing') ong++;
                         if (pr.projectStatus === 'Complete') com++;
