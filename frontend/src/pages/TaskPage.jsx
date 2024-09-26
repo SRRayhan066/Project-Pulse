@@ -90,6 +90,8 @@ const TaskPage = () => {
 
     const [currentStudent,setCurrentStudent] = useState(null);
 
+    const [comment,setComment] = useState(null);
+
     const addStudent = (newStudent) => {
         setAllStudents(prevStudents => [...prevStudents, newStudent]);
     };
@@ -176,7 +178,10 @@ const TaskPage = () => {
 
     const handleTasktName = (event) =>{
         setTaskName(event.target.value);
-        
+    }
+
+    const handleComments = (event) =>{
+        setComment(event.target.value);
     }
 
     const handleSelectChange = (selectedOption) => {
@@ -270,6 +275,18 @@ const TaskPage = () => {
             setEditVisible(false);
             window.location.reload();
         }).catch(err=>console.log(err));
+    }
+
+
+    const postAComment = () =>{
+        const dataToSend = { projectName:projectName, userEmail:user.name, comment:comment };
+        axios.post('http://localhost:5000/comments/create', dataToSend, {
+            withCredentials: true,
+        })
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => console.log(err));
     }
 
     return (
@@ -394,75 +411,27 @@ const TaskPage = () => {
                                         '>
                             <div className='h-[100%] w-[100%]  relative'>
                                 <div className='h-[85%] p-2 space-y-2 overflow-y-auto'>
-                                    <div className='flex flex-col items-start justify-center'>
-                                        <div className='text-xs'>Fahad Pathan</div>
-                                        <div className='bg-slate-300 w-fit p-2 rounded-md'>
-                                            This is incoming message 1.
-                                        </div>
-                                    </div>
-
-                                    <div className='flex flex-col items-start justify-center'>
-                                        <div className='text-xs'>Fahad Pathan</div>
-                                        <div className='bg-slate-300 w-fit p-2 rounded-md'>
-                                            This is incoming message from Fahad Pathan.
-                                        </div>
-                                    </div>
-
-                                    <div className='flex flex-col items-end justify-center'>
-                                        <div className='text-xs'>Rayhan</div>
-                                        <div className='bg-green-300 w-fit p-2 rounded-md'>
-                                            This is outgoing message from S R Rayhan.
-                                        </div>
-                                    </div>
-
-                                    <div className='flex flex-col items-start justify-center'>
-                                        <div className='text-xs'>Fahad Pathan</div>
-                                        <div className='bg-slate-300 w-fit p-2 rounded-md'>
-                                            This is incoming message 1.
-                                        </div>
-                                    </div>
-
-                                    <div className='flex flex-col items-start justify-center'>
-                                        <div className='text-xs'>Fahad Pathan</div>
-                                        <div className='bg-slate-300 w-fit p-2 rounded-md'>
-                                            This is incoming message from Fahad Pathan.
-                                        </div>
-                                    </div>
-
-                                    <div className='flex flex-col items-end justify-center'>
-                                        <div className='text-xs'>Rayhan</div>
-                                        <div className='bg-green-300 w-fit p-2 rounded-md'>
-                                            This is outgoing message from S R Rayhan.
-                                        </div>
-                                    </div>
-
-                                    <div className='flex flex-col items-start justify-center'>
-                                        <div className='text-xs'>Fahad Pathan</div>
-                                        <div className='bg-slate-300 w-fit p-2 rounded-md'>
-                                            This is incoming message 1.
-                                        </div>
-                                    </div>
-
-                                    <div className='flex flex-col items-start justify-center'>
-                                        <div className='text-xs'>Fahad Pathan</div>
-                                        <div className='bg-slate-300 w-fit p-2 rounded-md'>
-                                            This is incoming message from Fahad Pathan.
-                                        </div>
-                                    </div>
-
-                                    <div className='flex flex-col items-end justify-center'>
-                                        <div className='text-xs'>Rayhan</div>
-                                        <div className='bg-green-300 w-fit p-2 rounded-md'>
-                                            This is outgoing message from S R Rayhan.
-                                        </div>
-                                    </div>
                                     
+
+                                    <div className='flex flex-col items-start justify-center'>
+                                        <div className='text-xs'>Fahad Pathan</div>
+                                        <div className='bg-slate-300 w-fit p-2 rounded-md'>
+                                            This is incoming message from Fahad Pathan.
+                                        </div>
+                                    </div>
+
+                                    <div className='flex flex-col items-end justify-center'>
+                                        <div className='text-xs'>Rayhan</div>
+                                        <div className='bg-green-300 w-fit p-2 rounded-md'>
+                                            This is outgoing message from S R Rayhan.
+                                        </div>
+                                    </div>  
                                 </div>
                                 <div className='absolute bottom-1 left-0 w-full flex justify-between items-center px-2'>
                                     <div className='w-[78%]'>
-                                        <Input className='p-2'></Input>
+                                        <Input className='p-2' onChange={handleComments}></Input>
                                     </div>
-                                    <div className='font-semibold bg-black py-2 px-4 rounded-md text-white cursor-pointer'>
+                                    <div className='font-semibold bg-black py-2 px-4 rounded-md text-white cursor-pointer' onClick={postAComment}>
                                         Send
                                     </div>
                                 </div>
