@@ -78,31 +78,7 @@ const ProjectPage = () => {
                 })
                 .catch(err => console.log(err));
 
-                axios.get(`http://localhost:5000/projects/all`, {
-                    withCredentials: true,
-                })
-                .then(res => {
-                    console.log(res.data);  
-                    const formatList = res.data;
-                    let ong = 0, com = 0;
-                    const formattedProjectList = formatList.map(pr => {
-                        // Increment `ong` if projectStatus is 'Ongoing'
-                        if (pr.projectStatus === 'Ongoing') ong++;
-                        if (pr.projectStatus === 'Complete') com++;
-                        // Return the object for each project
-                        return {
-                            project: pr.projectName,          // Project name
-                            value: pr.projectName,            // Value (can be used for unique identification)
-                            'project-manager': pr.projectManagerEmail, // Project manager email
-                            status: pr.projectStatus          // Status of the project
-                        };
-                    });
-
-                    console.log(formattedProjectList);
-                    setProjectList(formattedProjectList);
-                    setProjectStatus({ongoing:ong, complete:com});
-                })
-                .catch(err => console.log(err));
+                
                 
             }catch(err){
                 console.log(err);
@@ -111,6 +87,41 @@ const ProjectPage = () => {
 
 
     },[]);
+
+
+    useEffect(() => {
+        if (user) {
+            // Only make the API call if user is not null
+            axios.get('http://localhost:5000/projects/all', {
+                withCredentials: true,
+            })
+            .then(res => {
+                console.log(res.data);
+                const formatList = res.data;
+                let ong = 0, com = 0;
+
+                const formattedProjectList = formatList
+                    .filter(pr => pr.projectManagerEmail === user.email)
+                    .map(pr => {
+                        if (pr.projectStatus === 'Ongoing') ong++;
+                        if (pr.projectStatus === 'Complete') com++;
+
+                        return {
+                            project: pr.projectName,
+                            value: pr.projectName,
+                            'project-manager': pr.projectManagerEmail,
+                            status: pr.projectStatus
+                        };
+                    });
+
+                console.log(formattedProjectList);
+                setProjectList(formattedProjectList);
+                setProjectStatus({ ongoing: ong, complete: com });
+            })
+            .catch(err => console.error(err));
+        }
+    }, [user]);
+
     const columns1 = [
         {
             title: 'Project',
@@ -425,41 +436,9 @@ const ProjectPage = () => {
                 </Form>
             </Modal>
 
-            <div className='flex justify-center items-center my-5 '>     
-                <div className='border-slate-300 border-2 p-2 rounded-md shadow-sm flex justify-center items-center
-                                sm:space-x-5
-                                xs:space-x-1'>
-                    <Progress
-                        percent={100}
-                        strokeColor='#abb2b9'
-                        type='circle'
-                        success={{
-                            percent: 0,
-                        }}
-                        format={() => <span className="text-md">{projectList.length}</span>}
-                    />
+            
 
-                    <Progress
-                        percent={projectStatus.ongoing*100/projectList.length}   
-                        type='circle'
-                        success={{
-                            percent: 0,
-                        }}
-                        format={() => <span className="text-md">Ongoing</span>}
-                    />
-
-                    <Progress
-                        percent={(projectStatus.complete)*100/projectList.length}   
-                        type='circle'
-                        success={{
-                            percent: (projectStatus.complete)*100/projectList.length,
-                        }}
-                        format={() => <span className="text-md">Complete</span>}
-                    />
-                </div>    
-            </div>
-
-            <div className='px-[5vw] '>
+            <div className='px-[5vw] my-10'>
                 <div className='flex space-x-3 justify-end items-center
                                 '>
                     {user.role==='manager' &&
@@ -478,23 +457,60 @@ const ProjectPage = () => {
                 <div className='my-2 
                                 lg:flex lg:flex-row lg:justify-center lg:items-start lg:space-y-0 lg:space-x-3
                                 xs:flex xs:flex-col xs:items-center xs:space-y-5 '>
-                    <div className='border-2
+                    <div className='border-2 border-slate-400 rounded-md
                                     xl:w-[70%]
                                     lg:w-[80%]
                                     xs:w-[100%]
                                     '>
-                        <Table columns={columns1} dataSource={projectList} pagination={{ pageSize: 4 }} scroll={{x:'40vw'}}>
+                        <Table columns={columns1} dataSource={projectList} pagination={{ pageSize: 7 }} scroll={{x:'40vw'}}>
 
                         </Table>
                     </div>
-                    <div className='border-2
+                    <div className='space-y-3 my-5 
                                     xl:w-[30%]
                                     lg:w-[20%]
                                     xs:w-[100%]'>
-                        <Table columns={columns2} dataSource={managerDataSource} pagination={{ pageSize: 4 }} >
+                    
+                        <div className='border-2 border-slate-400 rounded-md
+                                        '>
+                            <Table columns={columns2} dataSource={managerDataSource} pagination={{ pageSize: 3 }} >
 
-                        </Table>
+                            </Table>
+                        </div>
+                        <div className='border-slate-400 border-2 p-2 rounded-md shadow-sm flex flex-col justify-center items-center
+                                sm:space-y-5
+                                xs:space-y-1'>
+                            <h2>Project statistics</h2>
+                            <Progress
+                                percent={100}
+                                strokeColor='#abb2b9'
+                                
+                                success={{
+                                    percent: 0,
+                                }}
+                                format={() => <span className="text-md">Total</span>}
+                            />
+
+                            <Progress
+                                percent={projectStatus.ongoing*100/projectList.length}   
+                                
+                                success={{
+                                    percent: 0,
+                                }}
+                                format={() => <span className="text-md">Ongoing</span>}
+                            />
+
+                            <Progress
+                                percent={(projectStatus.complete)*100/projectList.length}   
+                                
+                                success={{
+                                    percent: (projectStatus.complete)*100/projectList.length,
+                                }}
+                                format={() => <span className="text-md">Complete</span>}
+                            />
+                        </div> 
                     </div>
+                    
                 </div>
             </div>
 
