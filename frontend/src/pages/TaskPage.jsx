@@ -92,6 +92,8 @@ const TaskPage = () => {
 
     const [comment,setComment] = useState(null);
 
+    const [commentList,setCommentList] = useState([]);
+
     const addStudent = (newStudent) => {
         setAllStudents(prevStudents => [...prevStudents, newStudent]);
     };
@@ -151,6 +153,26 @@ const TaskPage = () => {
                 setTaskStatistics({ ongoing: ong, complete: com });
                 console.log(formattedTaskList);
                 setTaskList(formattedTaskList);
+        })
+        .catch(err => console.log(err));
+
+
+        axios.get(`http://localhost:5000/comments/all/${projectName}`, {
+            withCredentials: true,
+        })
+        .then(res => {
+            console.log("All comments");
+            console.log(res.data);
+            const formatList = res.data;
+            const formattedTaskList = formatList
+                .filter(pr => pr.projectName === projectName)
+                .map(pr=>({
+                    userName:pr.userEmail,
+                    comment:pr.comment
+                }))
+            setCommentList(formattedTaskList);
+            console.log("The ultimate comments ");
+            console.log(formattedTaskList);
         })
         .catch(err => console.log(err));
         console.log("Vai array nen");
@@ -285,6 +307,8 @@ const TaskPage = () => {
         })
         .then(res => {
             console.log(res);
+            setComment(null);
+            window.location.reload();
         })
         .catch(err => console.log(err));
     }
@@ -411,21 +435,26 @@ const TaskPage = () => {
                                         '>
                             <div className='h-[100%] w-[100%]  relative'>
                                 <div className='h-[85%] p-2 space-y-2 overflow-y-auto'>
-                                    
-
-                                    <div className='flex flex-col items-start justify-center'>
-                                        <div className='text-xs'>Fahad Pathan</div>
-                                        <div className='bg-slate-300 w-fit p-2 rounded-md'>
-                                            This is incoming message from Fahad Pathan.
-                                        </div>
-                                    </div>
-
-                                    <div className='flex flex-col items-end justify-center'>
-                                        <div className='text-xs'>Rayhan</div>
-                                        <div className='bg-green-300 w-fit p-2 rounded-md'>
-                                            This is outgoing message from S R Rayhan.
-                                        </div>
-                                    </div>  
+                                    {
+                                        commentList.map((cm,index)=>(
+                                            
+                                            cm.userName === user.name ? ( // Check if cm.userName is not equal to user.name
+                                                <div className='flex flex-col items-end justify-center'>
+                                                    <div className='text-xs'>{cm.userName}</div>
+                                                    <div className='bg-green-300 w-fit p-2 rounded-md'>
+                                                        {cm.comment}
+                                                    </div>
+                                                    </div> 
+                                            ) : (
+                                                <div className='flex flex-col items-start justify-center'>
+                                                    <div className='text-xs'>{cm.userName}</div>
+                                                    <div className='bg-slate-300 w-fit p-2 rounded-md'>
+                                                        {cm.comment}
+                                                    </div>
+                                                    </div>
+                                            )
+                                        ))
+                                    } 
                                 </div>
                                 <div className='absolute bottom-1 left-0 w-full flex justify-between items-center px-2'>
                                     <div className='w-[78%]'>
