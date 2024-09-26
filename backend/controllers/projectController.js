@@ -8,6 +8,7 @@ const createProject = async (req, res, next) => {
     const project = new Project({
             projectName: req.body.projectName,
             projectManagerEmail: req.body.projectManagerEmail,
+            projectManagerName: req.body.projectManagerName,
             projectStatus: req.body.projectStatus
         });
     const newProject = await Project.create(project);

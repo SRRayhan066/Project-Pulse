@@ -14,6 +14,10 @@ const ProjectSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    projectManagerName: {
+        type: String,
+        required: true,
+    },
     projectStatus: {
         type: String,
         default: "Ongoing",
