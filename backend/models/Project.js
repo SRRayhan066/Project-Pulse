@@ -7,7 +7,18 @@ const ProjectSchema = new mongoose.Schema({
         trim: true,
     },
     allowedUsers: {
-        type: Array,
+        type: [
+            {
+                name: {
+                    type: String,
+                    required: true,
+                },
+                email: {
+                    type: String,
+                    required: true,
+                },
+            },
+        ],
         default: [],
     },
     projectManagerEmail: {

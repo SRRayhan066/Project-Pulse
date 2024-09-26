@@ -7,6 +7,7 @@ const fs = require('fs');
 // internal imports
 const Task = require('../models/Task');
 const Project = require('../models/Project');
+const User = require('../models/User');
 
 // create new task
 const createTask = async (req, res, next) => {
@@ -19,11 +20,14 @@ const createTask = async (req, res, next) => {
         });
         const newTask = await Task.create(task);
 
-        // assign assignedTo to the project if not already assigned
+        // assign assignedTo email and name to the project
         const project = await Project.findOne({ projectName: req.body.projectName });
-        if (!project.allowedUsers.includes(req.body.assignedTo)) {
-            project.allowedUsers.push(req.body.assignedTo);
+        const user = await User.findOne({ email: req.body.assignedTo });
+        if (user) {
+            project.allowedUsers.push({ name: user.name, email: user.email });
             await project.save();
+        } else {
+            res.status(404).json({ message: "User not found." });
         }
 
         res.status(201).json(newTask);
@@ -41,16 +45,21 @@ const updateTaskStatus = async (req, res, next) => {
                 task.taskStatus = req.body.taskStatus;
             }
             if (req.body.assignedTo) {
-                // assign assignedTo to the project and remove the previous assignedTo
+                // delete assignedTo from project allowedUsers.
                 const project = await Project.findOne({ projectName: task.projectName });
-                const index = project.allowedUsers.indexOf(task.assignedTo);
+                const index = project.allowedUsers.findIndex(user => user.email === task.assignedTo);
                 if (index > -1) {
                     project.allowedUsers.splice(index, 1);
                 }
-                if (!project.allowedUsers.includes(req.body.assignedTo)) {
-                    project.allowedUsers.push(req.body.assignedTo);
-                }
                 await project.save();
+
+                const user = await User.findOne({ email: req.body.assignedTo });
+                if (user) {
+                    project.allowedUsers.push({ name: user.name, email: user.email });
+                    await project.save();
+                } else {
+                    res.status(404).json({ message: "User not found." });
+                }
 
                 task.assignedTo = req.body.assignedTo; // update assignedTo
             }
@@ -110,13 +119,13 @@ const deleteTask = async (req, res, next) => {
         if (task) {
             await task.deleteOne();
 
-            // delete assignedTo from project
+            // delete assignedTo from project allowedUsers. 
             const project = await Project.findOne({ projectName: task.projectName });
-            const index = project.allowedUsers.indexOf(task.assignedTo);
+            const index = project.allowedUsers.findIndex(user => user.email === task.assignedTo);
             if (index > -1) {
                 project.allowedUsers.splice(index, 1);
-                await project.save();
             }
+            await project.save();
 
             res.status(200).json({ message: "Task deleted." });
         } else {
