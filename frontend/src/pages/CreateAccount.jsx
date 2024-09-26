@@ -12,7 +12,7 @@ const CreateAccount = () => {
 
     const handleSubmit = (event) =>{
         const { name, email, password } = event;
-        const dataToSend = { name, email, password };
+        const dataToSend = { name, email, password, working:false };
         console.log(dataToSend);
         axios.post('http://localhost:5000/auth/register', dataToSend, {
             withCredentials: true,

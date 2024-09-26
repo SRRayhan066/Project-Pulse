@@ -1,11 +1,12 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar } from 'antd';
-import { Progress, ConfigProvider, Upload, Select } from 'antd';
+import { Progress, ConfigProvider, Upload, Select, Alert } from 'antd';
 import { Space, Table, Tag } from 'antd';
 import { Modal, Input, Form, Radio, Button } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 const TaskPage = () => {
     const columns1 = [
@@ -95,10 +96,61 @@ const TaskPage = () => {
     const [editVisible,setEditVisible] = useState(false);
     const [taskName,setTaskName] = useState('');
     const [status, setStatus] = useState('');
+    const [selectedStudent,setSelectedStudent] = useState({name: '' , email: ''});
+    const [taskAddedSuccessfully,setTaskAddedSuccessfully] = useState(false);
     const {projectName, user, userList} = location.state || {};
+    const [studentList,setStudentList] = useState([]);
+    const [taskList,setTaskList] = useState([]);
     console.log(projectName);
 
     const navigate = useNavigate();
+
+    useEffect(()=>{
+        axios.get(`http://localhost:5000/profile/not/working`, {
+            withCredentials: true,
+        })
+        .then(res => {
+            const formatList = res.data;
+            console.log("The not working list ");
+            console.log(formatList);
+            const formattedUserList = formatList
+            .filter(user => user.role === 'user')
+            .map(user => ({
+                label: user.name,  // Name as the label
+                value: user.email,
+              // Email as the value (or use a unique ID if available)
+            }));
+            console.log(formattedUserList);
+            setStudentList(formattedUserList);
+        })
+        .catch(err => console.log(err));
+
+        axios.get(`http://localhost:5000/tasks/all/${projectName}`, {
+            withCredentials: true,
+        })
+        .then(res => {
+            console.log(res.data);
+                const formatList = res.data;
+                let ong = 0, com = 0;
+
+                const formattedTaskList = formatList
+                    .filter(pr => pr.projectName === projectName)
+                    .map(pr => {
+                        if (pr.taskStatus === 'Ongoing') ong++;
+                        if (pr.taskStatus === 'Complete') com++;
+
+                        return {
+                            task: pr.taskName,
+                            value: pr.taskName,
+                            'task-handler': pr.assignedTo,
+                            status: pr.taskStatus
+                        };
+                    });
+                    console.log(formattedTaskList);
+                    setTaskList(formattedTaskList);
+        })
+        .catch(err => console.log(err));
+    },[]);
 
     const showModal = () => {
         setVisible(true); // Show the modal
@@ -118,8 +170,56 @@ const TaskPage = () => {
         setEditVisible(false);
     };
 
+    const handleTasktName = (event) =>{
+        setTaskName(event.target.value);
+        
+    }
+
+    const handleSelectChange = (selectedOption) => {
+        console.log("Selected option");
+        console.log(selectedOption);
+        const {label,value} = selectedOption;
+        console.log('name : '+label);
+        setSelectedStudent({name:label,value}); 
+        console.log(selectedStudent);
+    };
+
+    const createATask = () =>{
+        console.log("Bal er email "+selectedStudent.value);
+        const dataToSend = { taskName:taskName,projectName:projectName, assignedTo:selectedStudent.name, taskStatus:'Ongoing' };
+        console.log(dataToSend);
+        axios.post('http://localhost:5000/tasks/create', dataToSend, {
+            withCredentials: true,
+        })
+        .then(res => {
+
+            axios.patch(`http://localhost:5000/profile/working/${selectedStudent.value}`,{working:true}, {
+                withCredentials: true,
+            })
+            .then(res=>{
+                console.log(res);
+            }).catch(err=>console.log(err));
+
+
+            console.log(res);
+            setVisible(false);
+            setTaskAddedSuccessfully(true);
+            const timer = setTimeout(() => {
+                setTaskAddedSuccessfully(false);
+                window.location.reload();
+            }, 1500);
+            return () => clearTimeout(timer);
+        })
+        .catch(err => console.log(err));
+    }
+
     return (
         <div >
+            {taskAddedSuccessfully && 
+                <div className='relative flex justify-center items-center z-50'>
+                    <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Task Added Successfully</span>} type="success" showIcon />
+                </div>
+            }
             <div className='flex space-x-5 py-2 items-center shadow-sm justify-end px-[5vw]'>
                 <div>
                     <Avatar size="large" icon={<UserOutlined />} />
@@ -140,10 +240,10 @@ const TaskPage = () => {
             >
                 <Form>
                     <Form.Item label='Task Name'>
-                        <Input placeholder='Task Name'></Input>
+                        <Input placeholder='Task Name' onChange={handleTasktName}></Input>
                     </Form.Item>
                     <Form.Item label='Assigned to'>
-                        <Select options={userList} placeholder='Choose student' >
+                        <Select options={studentList} onChange={handleSelectChange} placeholder='Choose student' labelInValue>
                         </Select>
                     </Form.Item>
                     <Form.Item>
@@ -151,7 +251,7 @@ const TaskPage = () => {
                             <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer' onClick={handleCancel}>
                                 Cancel
                             </div>
-                            <div className='font-semibold bg-green-400 p-2 rounded-md text-black cursor-pointer' onClick={handleCancel}>
+                            <div className='font-semibold bg-green-400 p-2 rounded-md text-black cursor-pointer' onClick={createATask}>
                                 Create
                             </div>
                         </div>
@@ -212,7 +312,7 @@ const TaskPage = () => {
                                     lg:w-[80%]
                                     xs:w-[100%]
                                     '>
-                        <Table columns={columns1} dataSource={dataSource} pagination={{ pageSize: 7 }} scroll={{x:'40vw'}}>
+                        <Table columns={columns1} dataSource={taskList} pagination={{ pageSize: 6 }} scroll={{x:'40vw'}}>
 
                         </Table>
                     </div>
