@@ -95,7 +95,7 @@ const TaskPage = () => {
     const [editVisible,setEditVisible] = useState(false);
     const [taskName,setTaskName] = useState('');
     const [status, setStatus] = useState('');
-    const {projectName} = location.state || {};
+    const {projectName, user} = location.state || {};
     console.log(projectName);
 
     const navigate = useNavigate();
@@ -123,6 +123,9 @@ const TaskPage = () => {
             <div className='flex space-x-5 py-2 items-center shadow-sm justify-end px-[5vw]'>
                 <div>
                     <Avatar size="large" icon={<UserOutlined />} />
+                </div>
+                <div>
+                    <h2>{user.name}</h2>
                 </div>
                 <div className='font-semibold bg-black p-2 rounded-md text-white cursor-pointer' onClick={()=>navigate('/')}>
                     Sign-out
@@ -190,9 +193,12 @@ const TaskPage = () => {
                                     xs:text-xl'>
                         {projectName}
                     </div>
-                    <div className='font-semibold bg-green-400 p-2 rounded-md text-black cursor-pointer' onClick={showModal}>
-                        Add Task
-                    </div>
+                    {user.role === 'manager' &&
+                        <div className='font-semibold bg-green-400 p-2 rounded-md text-black cursor-pointer' onClick={showModal}>
+                            Add Task
+                        </div>
+                    }
+                    
                 </div>
                 <div className='my-2
                                 lg:flex lg:flex-row lg:justify-center lg:items-start lg:space-y-0 lg:space-x-3

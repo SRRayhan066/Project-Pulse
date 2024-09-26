@@ -101,7 +101,7 @@ const ProjectPage = () => {
                 let ong = 0, com = 0;
 
                 const formattedProjectList = formatList
-                    .filter(pr => pr.projectManagerEmail === user.email)
+                    .filter(pr => user.role === 'admin' || pr.projectManagerEmail === user.email)
                     .map(pr => {
                         if (pr.projectStatus === 'Ongoing') ong++;
                         if (pr.projectStatus === 'Complete') com++;
@@ -152,7 +152,10 @@ const ProjectPage = () => {
             render: (text,record)=>{
                 return(
                     <div className='flex space-x-1 justify-center items-stretch'>
-                        <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={() => navigate('/tasks', { state: { projectName: record.project } })}>
+                        <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={() => {
+                            console.log('User object:', user); // Log the user object
+                            navigate('/tasks', { state: { projectName: record.project, user } });
+                        }}>
                             See Details
                         </div>
                         {user.role==='manager' && 
