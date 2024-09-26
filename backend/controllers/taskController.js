@@ -23,13 +23,17 @@ const createTask = async (req, res, next) => {
     }
 };
 
-// update task (update task status)
+// update task (update task status & assigned to) both maybe given or only one of them
 const updateTaskStatus = async (req, res, next) => {
     try {
-        const task = await
-        Task.findOne({ taskName: req.params.taskName });
+        const task = await Task.findOne({ taskName: req.params.taskName });
         if (task) {
-            task.taskStatus = req.body.taskStatus;
+            if (req.body.taskStatus) {
+                task.taskStatus = req.body.taskStatus;
+            }
+            if (req.body.assignedTo) {
+                task.assignedTo = req.body.assignedTo;
+            }
             const updatedTask = await task.save();
             res.status(200).json(updatedTask);
         } else {
