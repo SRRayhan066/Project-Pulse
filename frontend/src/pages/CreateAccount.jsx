@@ -23,7 +23,7 @@ const CreateAccount = () => {
             const timer = setTimeout(() => {
                 setShow(false);
                 navigate('/login');
-            }, 2000);
+            }, 1500);
             return () => clearTimeout(timer);
         })
         .catch(err => console.log(err));

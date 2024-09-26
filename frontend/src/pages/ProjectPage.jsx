@@ -29,6 +29,9 @@ const ProjectPage = () => {
     const [selectedManagers, setSelectedManagers] = useState([]);
     const [projectList,setProjectList] = useState([]);
 
+    const [addManager,setAddManager] = useState(false);
+    const [addManagerFailed,setAddManagerFailed] = useState(false);
+
     useEffect(()=>{
         const token = localStorage.getItem('pulse_token');
         console.log("The token is "+ token);
@@ -281,6 +284,12 @@ const ProjectPage = () => {
         .then(res=>{
             console.log(res);
             setAddManagerVisisble(false);
+            setAddManager(true);
+            const timer = setTimeout(() => {
+                setAddManager(false);
+                window.location.reload();
+            }, 1500);
+            return () => clearTimeout(timer);
         }).catch(err=>console.log(err));
     }
 
@@ -333,7 +342,14 @@ const ProjectPage = () => {
                 window.location.reload();
             }, 1500);
             return () => clearTimeout(timer);
-        }).catch(err=>console.log(err));
+        }).catch(err => {
+            console.log(err);
+            setAddManagerFailed(true);
+            const timer = setTimeout(() => {
+                setAddManagerFailed(false);
+            }, 1500);
+            return () => clearTimeout(timer);
+        });
     }
 
     return (
@@ -347,6 +363,18 @@ const ProjectPage = () => {
             {prAddedSuccessfully && 
                 <div className='relative flex justify-center items-center z-50'>
                     <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Project Added Successfully</span>} type="success" showIcon />
+                </div>
+            }
+
+            {addManager && 
+                <div className='relative flex justify-center items-center z-50'>
+                    <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Manager Added Successfully</span>} type="success" showIcon />
+                </div>
+            }
+
+            {addManagerFailed && 
+                <div className='relative flex justify-center items-center z-50'>
+                    <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Manager Added Failed</span>} type="error" showIcon />
                 </div>
             }
             

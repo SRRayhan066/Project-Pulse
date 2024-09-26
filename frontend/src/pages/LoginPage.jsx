@@ -10,6 +10,7 @@ import axios from 'axios';
 
 const LoginPage = () => {
     const [show,setShow] = useState(false);
+    const [fail,setFail] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = (event) =>{
@@ -26,17 +27,29 @@ const LoginPage = () => {
             const timer = setTimeout(() => {
                 setShow(false);
                 navigate('/projects');
-            }, 2000);
+            }, 1500);
             return () => clearTimeout(timer);
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            setFail(true);
+            console.log(err);
+            const timer = setTimeout(() => {
+                setFail(false);
+            }, 1500);
+            return () => clearTimeout(timer);
+        });
     }
 
     return (
         <div>
             {show && (
                 <div className='relative flex justify-center items-center z-50'>
-                <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Login Successfully</span>} type="success" showIcon />
+                    <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Login Successfully</span>} type="success" showIcon />
+                </div>
+            )}
+            {fail && (
+                <div className='relative flex justify-center items-center z-50'>
+                    <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Login Failed</span>} type="error" showIcon />
                 </div>
             )}
             <div className='flex justify-center items-center h-[100vh] w-[100vw] bg-green-100'>
