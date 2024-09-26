@@ -51,12 +51,14 @@ const ProjectPage = () => {
                 })
                 .then(res => {
                     const formatList = res.data;
-                    
+                    console.log("The format list ");
                     console.log(res.data);
                     const formattedUserList = formatList.map(user => ({
                         label: user.name,  // Name as the label
-                        value: user.email   // Email as the value (or use a unique ID if available)
+                        value: user.email,
+                        userState: user.working   // Email as the value (or use a unique ID if available)
                     }));
+                    console.log(formattedUserList);
                     setUserList(formattedUserList);
                 })
                 .catch(err => console.log(err));
