@@ -21,6 +21,28 @@ const getUserByEmail = async (req, res, next) => {
     }
 }
 
+//Get All users
+const getAllUsers = async (req, res, next) => {
+    try {
+        // Find all users, exclude the password field
+        const users = await User.find({ role: req.params.role }, // Filter to exclude admin and manager
+                                      { name: 1, email: 1, _id: 0 });
+        
+        // If no users are found, you can throw an error (optional)
+        if (!users || users.length === 0) {
+            const error = new Error("No users found");
+            error.status = 400;
+            throw error;
+        }
+
+        const names = users.map(user => user.name);
+        res.status(200).json(users);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 // update user role by email
 const updateUserRole = async (req, res, next) => {
     try {
@@ -39,4 +61,4 @@ const updateUserRole = async (req, res, next) => {
 }
 
 // export
-module.exports = { getUserByEmail, updateUserRole };
+module.exports = { getUserByEmail, updateUserRole, getAllUsers };

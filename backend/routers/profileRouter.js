@@ -2,9 +2,11 @@
 const express = require('express');
 
 // internal imports
-const { getUserByEmail, updateUserRole } = require('../controllers/profileController');
+const { getUserByEmail, updateUserRole, getAllUsers } = require('../controllers/profileController');
 
 const profileRouter = express.Router();
+
+profileRouter.get('/:role', getAllUsers);
 
 // get user by email
 profileRouter.get('/:email', getUserByEmail);
