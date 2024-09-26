@@ -77,6 +77,13 @@ const TaskPage = () => {
     const {projectName, user, userList} = location.state || {};
     const [studentList,setStudentList] = useState([]);
     const [taskList,setTaskList] = useState([]);
+
+    const [allStudents,setAllStudents] = useState([{name:'',email:''}]);
+
+    const addStudent = (newStudent) => {
+        setAllStudents(prevStudents => [...prevStudents, newStudent]);
+    };
+
     console.log(projectName);
 
     const navigate = useNavigate();
@@ -106,20 +113,24 @@ const TaskPage = () => {
         })
         .then(res => {
             console.log("Vai data");
-            console.log(res.data);
+            console.log(res.data[0].assignedTo);
             const formatList = res.data;
             let ong = 0, com = 0;
 
             const formattedTaskList = formatList
-                .filter(pr => pr.assignedTo === user.name || user.role==='manager' || user.role==='admin')
+                .filter(pr => pr.assignedTo.find(assignedUser => assignedUser.email === user.email)  || user.role==='manager' || user.role==='admin')
                 .map(pr => {
                     if (pr.taskStatus === 'Ongoing') ong++;
                     if (pr.taskStatus === 'Complete') com++;
-
+                    // const newStudent = { name: pr.assignedTo[0].name, email: pr.assignedTo[0].email };
+                    // addStudent(newStudent);
+                    localStorage.setItem(pr.assignedTo[0].name,pr.assignedTo[0].email);
+                    console.log("Bal Name : "+pr.assignedTo[0].name);
+                    console.log("Bal Email : "+pr.assignedTo[0].email);
                     return {
                         task: pr.taskName,
                         value: pr.taskName,
-                        'task-handler': pr.assignedTo,
+                        'task-handler': pr.assignedTo[0].name,
                         status: pr.taskStatus
                     };
                 });
@@ -127,6 +138,8 @@ const TaskPage = () => {
                 setTaskList(formattedTaskList);
         })
         .catch(err => console.log(err));
+        console.log("Vai array nen");
+        console.log(allStudents);
     },[]);
 
     const showModal = () => {
@@ -162,8 +175,11 @@ const TaskPage = () => {
     };
 
     const createATask = () =>{
-        const dataToSend = { taskName:taskName,projectName:projectName, assignedTo:selectedStudent.name, taskStatus:'Ongoing' };
+        const dataToSend = { taskName:taskName,projectName:projectName, assignedTo:selectedStudent.value, taskStatus:'Ongoing' };
+        console.log("Data jeta pathamu")
         console.log(dataToSend);
+        
+
         axios.post('http://localhost:5000/tasks/create', dataToSend, {
             withCredentials: true,
         })
@@ -190,12 +206,20 @@ const TaskPage = () => {
     }
 
     const deleteTask = (record) =>{
-        console.log(record.value);
+        console.log("Bal er record");
+        console.log(record);
         axios.delete(`http://localhost:5000/tasks/delete/${record.value}`, {
             withCredentials: true,
         })
         .then(res=>{
             console.log(res);
+            axios.patch(`http://localhost:5000/profile/working/${localStorage.getItem(record['task-handler'])}`,{working:false}, {
+                withCredentials: true,
+            })
+            .then(res=>{
+                console.log(res);
+            }).catch(err=>console.log(err));
+
             setRemovedManager(true);
             const timer = setTimeout(() => {
                 setRemovedManager(false);
