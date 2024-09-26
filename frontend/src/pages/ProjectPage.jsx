@@ -109,7 +109,7 @@ const ProjectPage = () => {
                         return {
                             project: pr.projectName,
                             value: pr.projectName,
-                            'project-manager': pr.projectManagerEmail,
+                            'project-manager': pr.projectManagerName,
                             status: pr.projectStatus
                         };
                     });
@@ -281,7 +281,7 @@ const ProjectPage = () => {
 
     const addNewProject = () =>{
         console.log(projectName);
-        const dataToSend = { projectName:projectName, projectManagerEmail:user.email, projectStatus:'Ongoing' };
+        const dataToSend = { projectName:projectName,projectManagerName:user.name, projectManagerEmail:user.email, projectStatus:'Ongoing' };
         console.log(dataToSend);
         axios.post('http://localhost:5000/projects/create', dataToSend, {
             withCredentials: true,
