@@ -134,7 +134,7 @@ const TaskPage = () => {
                 let ong = 0, com = 0;
 
                 const formattedTaskList = formatList
-                    .filter(pr => pr.projectName === projectName)
+                    .filter(pr => pr.assignedTo === user.name)
                     .map(pr => {
                         if (pr.taskStatus === 'Ongoing') ong++;
                         if (pr.taskStatus === 'Complete') com++;
