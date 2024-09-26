@@ -86,6 +86,8 @@ const TaskPage = () => {
 
     const [allStudents,setAllStudents] = useState([{name:'',email:''}]);
 
+    const [taskStatistics,setTaskStatistics] = useState({ongoing: 0, complete: 0});
+
     const [currentStudent,setCurrentStudent] = useState(null);
 
     const addStudent = (newStudent) => {
@@ -141,7 +143,10 @@ const TaskPage = () => {
                         'task-handler': pr.assignedTo[0].name,
                         status: pr.taskStatus
                     };
+
+                    
                 });
+                setTaskStatistics({ ongoing: ong, complete: com });
                 console.log(formattedTaskList);
                 setTaskList(formattedTaskList);
         })
@@ -474,18 +479,18 @@ const TaskPage = () => {
                                 success={{
                                     percent: 0,
                                 }}
-                                format={() => <span className="text-md">137</span>}
+                                format={() => <span className="text-md">Total</span>}
                             />
 
                             <Progress
-                                percent={60}
+                                percent={taskStatistics.ongoing*100/taskList.length}
                                 format={() => <span className="text-md">Ongoing</span>}
                             />
 
                             <Progress
-                                percent={30}
+                                percent={taskStatistics.complete*100/taskList.length}
                                 success={{
-                                    percent: 30,
+                                    percent: taskStatistics.complete*100/taskList.length,
                                 }}
                                 format={() => <span className="text-md">Complete</span>}
                             />
