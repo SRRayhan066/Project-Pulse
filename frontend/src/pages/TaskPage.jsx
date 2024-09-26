@@ -55,7 +55,7 @@ const TaskPage = () => {
                         <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={() => showEditModal(record)} >
                             Edit
                         </div>
-                        <div className='font-semibold bg-red-400 p-2 rounded-md text-white cursor-pointer flex items-center justify-center'>
+                        <div className='font-semibold bg-red-400 p-2 rounded-md text-white cursor-pointer flex items-center justify-center' onClick={() => deleteTask(record)}>
                             Delete
                         </div>
                     </div> 
@@ -65,35 +65,11 @@ const TaskPage = () => {
         },
     ];
 
-    const dataSource = [
-        {
-            key: '1',
-            task: 'Create Web Application',
-            'task-handler': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-        {
-            key: '2',
-            task: 'Create Android Application',
-            'task-handler': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-        {
-            key: '3',
-            task: 'Create Web Application',
-            'task-handler': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-        {
-            key: '4',
-            task: 'Create Web Application',
-            'task-handler': 'Md Shafikul Rahman',
-            status: 'complete'
-        },
-    ]
+
     const location = useLocation();
     const [visible, setVisible] = useState(false);
     const [editVisible,setEditVisible] = useState(false);
+    const [removedManager,setRemovedManager] = useState(false);
     const [taskName,setTaskName] = useState('');
     const [status, setStatus] = useState('');
     const [selectedStudent,setSelectedStudent] = useState({name: '' , email: ''});
@@ -129,25 +105,26 @@ const TaskPage = () => {
             withCredentials: true,
         })
         .then(res => {
+            console.log("Vai data");
             console.log(res.data);
-                const formatList = res.data;
-                let ong = 0, com = 0;
+            const formatList = res.data;
+            let ong = 0, com = 0;
 
-                const formattedTaskList = formatList
-                    .filter(pr => pr.assignedTo === user.name)
-                    .map(pr => {
-                        if (pr.taskStatus === 'Ongoing') ong++;
-                        if (pr.taskStatus === 'Complete') com++;
+            const formattedTaskList = formatList
+                .filter(pr => pr.assignedTo === user.name || user.role==='manager' || user.role==='admin')
+                .map(pr => {
+                    if (pr.taskStatus === 'Ongoing') ong++;
+                    if (pr.taskStatus === 'Complete') com++;
 
-                        return {
-                            task: pr.taskName,
-                            value: pr.taskName,
-                            'task-handler': pr.assignedTo,
-                            status: pr.taskStatus
-                        };
-                    });
-                    console.log(formattedTaskList);
-                    setTaskList(formattedTaskList);
+                    return {
+                        task: pr.taskName,
+                        value: pr.taskName,
+                        'task-handler': pr.assignedTo,
+                        status: pr.taskStatus
+                    };
+                });
+                console.log(formattedTaskList);
+                setTaskList(formattedTaskList);
         })
         .catch(err => console.log(err));
     },[]);
@@ -185,7 +162,6 @@ const TaskPage = () => {
     };
 
     const createATask = () =>{
-        console.log("Bal er email "+selectedStudent.value);
         const dataToSend = { taskName:taskName,projectName:projectName, assignedTo:selectedStudent.name, taskStatus:'Ongoing' };
         console.log(dataToSend);
         axios.post('http://localhost:5000/tasks/create', dataToSend, {
@@ -213,6 +189,22 @@ const TaskPage = () => {
         .catch(err => console.log(err));
     }
 
+    const deleteTask = (record) =>{
+        console.log(record.value);
+        axios.delete(`http://localhost:5000/tasks/delete/${record.value}`, {
+            withCredentials: true,
+        })
+        .then(res=>{
+            console.log(res);
+            setRemovedManager(true);
+            const timer = setTimeout(() => {
+                setRemovedManager(false);
+                window.location.reload();
+            }, 1500);
+            return () => clearTimeout(timer);
+        }).catch(err=>console.log(err));
+    }
+
     return (
         <div >
             {taskAddedSuccessfully && 
@@ -220,6 +212,13 @@ const TaskPage = () => {
                     <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Task Added Successfully</span>} type="success" showIcon />
                 </div>
             }
+
+            {removedManager && 
+                <div className='relative flex justify-center items-center z-50'>
+                    <Alert className='top-[3vh] w-[auto] fixed' message={<span className='font-serif font-semibold'>Removed Successfully</span>} type="success" showIcon />
+                </div>
+            }
+
             <div className='flex space-x-5 py-2 items-center shadow-sm justify-end px-[5vw]'>
                 <div>
                     <Avatar size="large" icon={<UserOutlined />} />
