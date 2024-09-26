@@ -41,8 +41,20 @@ const updateTaskStatus = async (req, res, next) => {
                 task.taskStatus = req.body.taskStatus;
             }
             if (req.body.assignedTo) {
-                task.assignedTo = req.body.assignedTo;
+                // assign assignedTo to the project and remove the previous assignedTo
+                const project = await Project.findOne({ projectName: task.projectName });
+                const index = project.allowedUsers.indexOf(task.assignedTo);
+                if (index > -1) {
+                    project.allowedUsers.splice(index, 1);
+                }
+                if (!project.allowedUsers.includes(req.body.assignedTo)) {
+                    project.allowedUsers.push(req.body.assignedTo);
+                }
+                await project.save();
+
+                task.assignedTo = req.body.assignedTo; // update assignedTo
             }
+
             const updatedTask = await task.save();
             res.status(200).json(updatedTask);
         } else {
