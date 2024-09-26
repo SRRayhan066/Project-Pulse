@@ -6,6 +6,7 @@ const fs = require('fs');
 
 // internal imports
 const Task = require('../models/Task');
+const Project = require('../models/Project');
 
 // create new task
 const createTask = async (req, res, next) => {
@@ -17,6 +18,14 @@ const createTask = async (req, res, next) => {
             taskStatus: req.body.taskStatus
         });
         const newTask = await Task.create(task);
+
+        // assign assignedTo to the project if not already assigned
+        const project = await Project.findOne({ projectName: req.body.projectName });
+        if (!project.allowedUsers.includes(req.body.assignedTo)) {
+            project.allowedUsers.push(req.body.assignedTo);
+            await project.save();
+        }
+
         res.status(201).json(newTask);
     } catch (error) {
         next(error);
@@ -88,6 +97,15 @@ const deleteTask = async (req, res, next) => {
         const task = await Task.findOne({ taskName: req.params.taskName });
         if (task) {
             await task.deleteOne();
+
+            // delete assignedTo from project
+            const project = await Project.findOne({ projectName: task.projectName });
+            const index = project.allowedUsers.indexOf(task.assignedTo);
+            if (index > -1) {
+                project.allowedUsers.splice(index, 1);
+                await project.save();
+            }
+
             res.status(200).json({ message: "Task deleted." });
         } else {
             res.status(404).json({ message: "Task not found." });

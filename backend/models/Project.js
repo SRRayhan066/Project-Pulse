@@ -6,7 +6,7 @@ const ProjectSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-    tasks: {
+    allowedUsers: {
         type: Array,
         default: [],
     },
@@ -16,7 +16,6 @@ const ProjectSchema = new mongoose.Schema({
     },
     projectManagerName: {
         type: String,
-        required: true,
     },
     projectStatus: {
         type: String,
