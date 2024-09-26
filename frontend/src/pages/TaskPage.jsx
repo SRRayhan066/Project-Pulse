@@ -96,10 +96,11 @@ const TaskPage = () => {
     const [editVisible,setEditVisible] = useState(false);
     const [taskName,setTaskName] = useState('');
     const [status, setStatus] = useState('');
-    const [selectedStudent,setSelectedStudent] = useState('');
+    const [selectedStudent,setSelectedStudent] = useState({name: '' , email: ''});
     const [taskAddedSuccessfully,setTaskAddedSuccessfully] = useState(false);
     const {projectName, user, userList} = location.state || {};
     const [studentList,setStudentList] = useState([]);
+    const [taskList,setTaskList] = useState([]);
     console.log(projectName);
 
     const navigate = useNavigate();
@@ -121,6 +122,32 @@ const TaskPage = () => {
             }));
             console.log(formattedUserList);
             setStudentList(formattedUserList);
+        })
+        .catch(err => console.log(err));
+
+        axios.get(`http://localhost:5000/tasks/all/${projectName}`, {
+            withCredentials: true,
+        })
+        .then(res => {
+            console.log(res.data);
+                const formatList = res.data;
+                let ong = 0, com = 0;
+
+                const formattedTaskList = formatList
+                    .filter(pr => pr.projectName === projectName)
+                    .map(pr => {
+                        if (pr.taskStatus === 'Ongoing') ong++;
+                        if (pr.taskStatus === 'Complete') com++;
+
+                        return {
+                            task: pr.taskName,
+                            value: pr.taskName,
+                            'task-handler': pr.assignedTo,
+                            status: pr.taskStatus
+                        };
+                    });
+                    console.log(formattedTaskList);
+                    setTaskList(formattedTaskList);
         })
         .catch(err => console.log(err));
     },[]);
@@ -148,20 +175,25 @@ const TaskPage = () => {
         
     }
 
-    const handleSelectChange = (value) => {
-        setSelectedStudent(value); 
+    const handleSelectChange = (selectedOption) => {
+        console.log("Selected option");
+        console.log(selectedOption);
+        const {label,value} = selectedOption;
+        console.log('name : '+label);
+        setSelectedStudent({name:label,value}); 
         console.log(selectedStudent);
     };
 
     const createATask = () =>{
-        const dataToSend = { taskName:taskName,projectName:projectName, assignedTo:selectedStudent, taskStatus:'Ongoing' };
+        console.log("Bal er email "+selectedStudent.value);
+        const dataToSend = { taskName:taskName,projectName:projectName, assignedTo:selectedStudent.name, taskStatus:'Ongoing' };
         console.log(dataToSend);
         axios.post('http://localhost:5000/tasks/create', dataToSend, {
             withCredentials: true,
         })
         .then(res => {
 
-            axios.patch(`http://localhost:5000/profile/working/${selectedStudent}`,{working:true}, {
+            axios.patch(`http://localhost:5000/profile/working/${selectedStudent.value}`,{working:true}, {
                 withCredentials: true,
             })
             .then(res=>{
@@ -211,7 +243,7 @@ const TaskPage = () => {
                         <Input placeholder='Task Name' onChange={handleTasktName}></Input>
                     </Form.Item>
                     <Form.Item label='Assigned to'>
-                        <Select options={studentList} onChange={handleSelectChange} placeholder='Choose student' >
+                        <Select options={studentList} onChange={handleSelectChange} placeholder='Choose student' labelInValue>
                         </Select>
                     </Form.Item>
                     <Form.Item>
@@ -280,7 +312,7 @@ const TaskPage = () => {
                                     lg:w-[80%]
                                     xs:w-[100%]
                                     '>
-                        <Table columns={columns1} dataSource={dataSource} pagination={{ pageSize: 7 }} scroll={{x:'40vw'}}>
+                        <Table columns={columns1} dataSource={taskList} pagination={{ pageSize: 6 }} scroll={{x:'40vw'}}>
 
                         </Table>
                     </div>
