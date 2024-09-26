@@ -154,7 +154,7 @@ const ProjectPage = () => {
                     <div className='flex space-x-1 justify-center items-stretch'>
                         <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={() => {
                             console.log('User object:', user); // Log the user object
-                            navigate('/tasks', { state: { projectName: record.project, user } });
+                            navigate('/tasks', { state: { projectName: record.project, user, userList } });
                         }}>
                             See Details
                         </div>

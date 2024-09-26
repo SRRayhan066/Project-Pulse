@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar } from 'antd';
-import { Progress, ConfigProvider, Upload } from 'antd';
+import { Progress, ConfigProvider, Upload, Select } from 'antd';
 import { Space, Table, Tag } from 'antd';
 import { Modal, Input, Form, Radio, Button } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -95,7 +95,7 @@ const TaskPage = () => {
     const [editVisible,setEditVisible] = useState(false);
     const [taskName,setTaskName] = useState('');
     const [status, setStatus] = useState('');
-    const {projectName, user} = location.state || {};
+    const {projectName, user, userList} = location.state || {};
     console.log(projectName);
 
     const navigate = useNavigate();
@@ -141,6 +141,10 @@ const TaskPage = () => {
                 <Form>
                     <Form.Item label='Task Name'>
                         <Input placeholder='Task Name'></Input>
+                    </Form.Item>
+                    <Form.Item label='Assigned to'>
+                        <Select options={userList} placeholder='Choose student' >
+                        </Select>
                     </Form.Item>
                     <Form.Item>
                         <div className='flex justify-end space-x-2'>
@@ -203,7 +207,7 @@ const TaskPage = () => {
                 <div className='my-2
                                 lg:flex lg:flex-row lg:justify-center lg:items-start lg:space-y-0 lg:space-x-3
                                 xs:flex xs:flex-col xs:items-center xs:space-y-5 '>
-                    <div className='border-2
+                    <div className='border-2 border-slate-400 rounded-md
                                     xl:w-[70%]
                                     lg:w-[80%]
                                     xs:w-[100%]
@@ -216,7 +220,7 @@ const TaskPage = () => {
                     <div className='xl:w-[30%]
                                     lg:w-[20%]
                                     xs:w-[100%] space-y-3'>
-                        <div className='border-2 h-[50vh] rounded-md
+                        <div className='border-2 border-slate-400 h-[50vh] rounded-md
                                         '>
                             <div className='h-[100%] w-[100%]  relative'>
                                 <div className='h-[85%] p-2 space-y-2 overflow-y-auto'>
@@ -295,7 +299,7 @@ const TaskPage = () => {
                             </div>
                             
                         </div>
-                        <div className='border-slate-300 border-2 p-2 rounded-md shadow-sm flex flex-col justify-center items-center
+                        <div className='border-slate-400 border-2 p-2 rounded-md shadow-sm flex flex-col justify-center items-center
                                     sm:space-y-5
                                     xs:space-y-1'>
                             <h2>Task statistics</h2>
