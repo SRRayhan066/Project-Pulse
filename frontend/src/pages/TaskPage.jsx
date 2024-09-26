@@ -9,6 +9,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const TaskPage = () => {
+    const location = useLocation();
+    const {projectName, user, userList} = location.state || {};
     const columns1 = [
         {
             title: 'Task',
@@ -49,24 +51,28 @@ const TaskPage = () => {
             dataIndex: 'action',
             key: 'action',
             align: 'center',
+            className: user.role === 'manager' ? '' : 'hidden',
             render: (text,record)=>{
-                return(
-                    <div className='flex space-x-1 justify-center items-stretch'>
-                        <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={() => showEditModal(record)} >
-                            Edit
-                        </div>
-                        <div className='font-semibold bg-red-400 p-2 rounded-md text-white cursor-pointer flex items-center justify-center' onClick={() => deleteTask(record)}>
-                            Delete
-                        </div>
-                    </div> 
-                )
+                if(user.role==='manager'){
+                    return(
+                        <div className='flex space-x-1 justify-center items-stretch'>
+                            <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={() => showEditModal(record)} >
+                                Edit
+                            </div>
+                            <div className='font-semibold bg-red-400 p-2 rounded-md text-white cursor-pointer flex items-center justify-center' onClick={() => deleteTask(record)}>
+                                Delete
+                            </div>
+                        </div> 
+                    )
+                }
+                
                 
             }
         },
     ];
 
 
-    const location = useLocation();
+    
     const [visible, setVisible] = useState(false);
     const [editVisible,setEditVisible] = useState(false);
     const [removedManager,setRemovedManager] = useState(false);
@@ -74,7 +80,7 @@ const TaskPage = () => {
     const [status, setStatus] = useState(null);
     const [selectedStudent,setSelectedStudent] = useState({name: null , email: null});
     const [taskAddedSuccessfully,setTaskAddedSuccessfully] = useState(false);
-    const {projectName, user, userList} = location.state || {};
+    
     const [studentList,setStudentList] = useState([]);
     const [taskList,setTaskList] = useState([]);
 
