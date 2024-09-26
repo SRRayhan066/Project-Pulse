@@ -27,7 +27,7 @@ const getAllUsers = async (req, res, next) => {
         // Find all users, exclude the password field
         const users = await User.find({ role: req.params.role }, // Filter to exclude admin and manager
                                       { name: 1, email: 1, _id: 0 });
-        
+
         // If no users are found, you can throw an error (optional)
         if (!users || users.length === 0) {
             const error = new Error("No users found");
@@ -60,5 +60,42 @@ const updateUserRole = async (req, res, next) => {
     }
 }
 
+// update user working status by email
+const updateUserWorkingStatus = async (req, res, next) => {
+    try {
+        const user = await User.findOneAndUpdate({ email: req.params.email }, { working: req.body.working }, { new: true }).select('-password');
+
+        if (!user) {
+            const error = new Error("User not found");
+            error.status = 404;
+            throw error;
+        }
+
+        res.status(200).json(user);
+    }
+    catch (error) {
+        next(error);
+    }
+
+}
+
+// get all users that are not working (false or null)
+const getNotWorkingUsers = async (req, res, next) => {
+    try {
+        const users = await User.find({ working: { $ne: true } }, { name: 1, email: 1, role: 1, _id: 0 });
+
+        if (!users || users.length === 0) {
+            const error = new Error("No users found");
+            error.status = 400;
+            throw error;
+        }
+
+        res.status(200).json(users);
+    }
+    catch (error) {
+        next(error);
+    }
+}
+
 // export
-module.exports = { getUserByEmail, updateUserRole, getAllUsers };
+module.exports = { getUserByEmail, updateUserRole, getAllUsers, updateUserWorkingStatus, getNotWorkingUsers };

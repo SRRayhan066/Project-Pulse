@@ -23,6 +23,10 @@ const UserSchema = new mongoose.Schema({
         unique: true,
         default: () => new mongoose.Types.ObjectId().toString(), // Generate a unique ID
     },
+    working: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 module.exports = mongoose.model('User', UserSchema);
