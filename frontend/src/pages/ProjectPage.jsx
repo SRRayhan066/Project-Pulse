@@ -152,7 +152,7 @@ const ProjectPage = () => {
             render: (text,record)=>{
                 return(
                     <div className='flex space-x-1 justify-center items-stretch'>
-                        <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={() => navigate('/tasks')}>
+                        <div className='font-semibold border-2 p-2 rounded-md text-black cursor-pointer flex items-center justify-center' onClick={() => navigate('/tasks', { state: { projectName: record.project } })}>
                             See Details
                         </div>
                         {user.role==='manager' && 

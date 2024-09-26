@@ -2,10 +2,10 @@ import React from 'react';
 import { useState } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar } from 'antd';
-import { Progress, ConfigProvider } from 'antd';
+import { Progress, ConfigProvider, Upload } from 'antd';
 import { Space, Table, Tag } from 'antd';
 import { Modal, Input, Form, Radio, Button } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const TaskPage = () => {
     const columns1 = [
@@ -29,6 +29,19 @@ const TaskPage = () => {
             key: 'status',
             align: 'center',
             
+        },
+        {
+            title: 'Files',
+            dataIndex: 'files',
+            key:'files',
+            align:'center',
+            render: (text,record)=>{
+                return(
+                    <Upload beforeUpload={true}>
+                        <Button>Click to upload</Button>
+                    </Upload>
+                )
+            }
         },
         {
             title: 'Action',
@@ -77,11 +90,13 @@ const TaskPage = () => {
             status: 'complete'
         },
     ]
-
+    const location = useLocation();
     const [visible, setVisible] = useState(false);
     const [editVisible,setEditVisible] = useState(false);
     const [taskName,setTaskName] = useState('');
     const [status, setStatus] = useState('');
+    const {projectName} = location.state || {};
+    console.log(projectName);
 
     const navigate = useNavigate();
 
@@ -167,142 +182,142 @@ const TaskPage = () => {
                 </Form>
             </Modal>
 
-            <div className='flex justify-center items-center my-5 '>     
-                <div className='border-slate-300 border-2 p-2 rounded-md shadow-sm flex justify-center items-center
-                                sm:space-x-5
-                                xs:space-x-1'>
-                    <Progress
-                        percent={100}
-                        strokeColor='#abb2b9'
-                        type='circle'
-                        success={{
-                            percent: 0,
-                        }}
-                        format={() => <span className="text-md">137</span>}
-                    />
-
-                    <Progress
-                        percent={60}   
-                        type='circle'
-                        format={() => <span className="text-md">Ongoing</span>}
-                    />
-
-                    <Progress
-                        percent={30}   
-                        type='circle'
-                        success={{
-                            percent: 30,
-                        }}
-                        format={() => <span className="text-md">Complete</span>}
-                    />
-                </div>    
-            </div>
-
-            <div className='px-[5vw] '>
+            <div className='px-[5vw] my-10'>
                 <div className='flex space-x-3 justify-between items-center
                                 '>
                     <div className='font-serif font-semibold
                                     sm:text-2xl
                                     xs:text-xl'>
-                        Project Name
+                        {projectName}
                     </div>
                     <div className='font-semibold bg-green-400 p-2 rounded-md text-black cursor-pointer' onClick={showModal}>
                         Add Task
                     </div>
                 </div>
                 <div className='my-2
-                                lg:flex lg:flex-row lg:justify-center lg:items-stretch lg:space-y-0 lg:space-x-3
+                                lg:flex lg:flex-row lg:justify-center lg:items-start lg:space-y-0 lg:space-x-3
                                 xs:flex xs:flex-col xs:items-center xs:space-y-5 '>
                     <div className='border-2
                                     xl:w-[70%]
                                     lg:w-[80%]
                                     xs:w-[100%]
                                     '>
-                        <Table columns={columns1} dataSource={dataSource} pagination={{ pageSize: 4 }} scroll={{x:'40vw'}}>
+                        <Table columns={columns1} dataSource={dataSource} pagination={{ pageSize: 7 }} scroll={{x:'40vw'}}>
 
                         </Table>
                     </div>
-                    <div className='border-2 h-[57vh]
-                                    xl:w-[30%]
+
+                    <div className='xl:w-[30%]
                                     lg:w-[20%]
-                                    xs:w-[100%]'>
-                        <div className='h-[100%] w-[100%]  relative'>
-                            <div className='h-[85%] p-2 space-y-2 overflow-y-auto'>
-                                <div className='flex flex-col items-start justify-center'>
-                                    <div className='text-xs'>Fahad Pathan</div>
-                                    <div className='bg-slate-300 w-fit p-2 rounded-md'>
-                                        This is incoming message 1.
+                                    xs:w-[100%] space-y-3'>
+                        <div className='border-2 h-[50vh] rounded-md
+                                        '>
+                            <div className='h-[100%] w-[100%]  relative'>
+                                <div className='h-[85%] p-2 space-y-2 overflow-y-auto'>
+                                    <div className='flex flex-col items-start justify-center'>
+                                        <div className='text-xs'>Fahad Pathan</div>
+                                        <div className='bg-slate-300 w-fit p-2 rounded-md'>
+                                            This is incoming message 1.
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className='flex flex-col items-start justify-center'>
-                                    <div className='text-xs'>Fahad Pathan</div>
-                                    <div className='bg-slate-300 w-fit p-2 rounded-md'>
-                                        This is incoming message from Fahad Pathan.
+                                    <div className='flex flex-col items-start justify-center'>
+                                        <div className='text-xs'>Fahad Pathan</div>
+                                        <div className='bg-slate-300 w-fit p-2 rounded-md'>
+                                            This is incoming message from Fahad Pathan.
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className='flex flex-col items-end justify-center'>
-                                    <div className='text-xs'>Rayhan</div>
-                                    <div className='bg-green-300 w-fit p-2 rounded-md'>
-                                        This is outgoing message from S R Rayhan.
+                                    <div className='flex flex-col items-end justify-center'>
+                                        <div className='text-xs'>Rayhan</div>
+                                        <div className='bg-green-300 w-fit p-2 rounded-md'>
+                                            This is outgoing message from S R Rayhan.
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className='flex flex-col items-start justify-center'>
-                                    <div className='text-xs'>Fahad Pathan</div>
-                                    <div className='bg-slate-300 w-fit p-2 rounded-md'>
-                                        This is incoming message 1.
+                                    <div className='flex flex-col items-start justify-center'>
+                                        <div className='text-xs'>Fahad Pathan</div>
+                                        <div className='bg-slate-300 w-fit p-2 rounded-md'>
+                                            This is incoming message 1.
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className='flex flex-col items-start justify-center'>
-                                    <div className='text-xs'>Fahad Pathan</div>
-                                    <div className='bg-slate-300 w-fit p-2 rounded-md'>
-                                        This is incoming message from Fahad Pathan.
+                                    <div className='flex flex-col items-start justify-center'>
+                                        <div className='text-xs'>Fahad Pathan</div>
+                                        <div className='bg-slate-300 w-fit p-2 rounded-md'>
+                                            This is incoming message from Fahad Pathan.
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className='flex flex-col items-end justify-center'>
-                                    <div className='text-xs'>Rayhan</div>
-                                    <div className='bg-green-300 w-fit p-2 rounded-md'>
-                                        This is outgoing message from S R Rayhan.
+                                    <div className='flex flex-col items-end justify-center'>
+                                        <div className='text-xs'>Rayhan</div>
+                                        <div className='bg-green-300 w-fit p-2 rounded-md'>
+                                            This is outgoing message from S R Rayhan.
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className='flex flex-col items-start justify-center'>
-                                    <div className='text-xs'>Fahad Pathan</div>
-                                    <div className='bg-slate-300 w-fit p-2 rounded-md'>
-                                        This is incoming message 1.
+                                    <div className='flex flex-col items-start justify-center'>
+                                        <div className='text-xs'>Fahad Pathan</div>
+                                        <div className='bg-slate-300 w-fit p-2 rounded-md'>
+                                            This is incoming message 1.
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className='flex flex-col items-start justify-center'>
-                                    <div className='text-xs'>Fahad Pathan</div>
-                                    <div className='bg-slate-300 w-fit p-2 rounded-md'>
-                                        This is incoming message from Fahad Pathan.
+                                    <div className='flex flex-col items-start justify-center'>
+                                        <div className='text-xs'>Fahad Pathan</div>
+                                        <div className='bg-slate-300 w-fit p-2 rounded-md'>
+                                            This is incoming message from Fahad Pathan.
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className='flex flex-col items-end justify-center'>
-                                    <div className='text-xs'>Rayhan</div>
-                                    <div className='bg-green-300 w-fit p-2 rounded-md'>
-                                        This is outgoing message from S R Rayhan.
+                                    <div className='flex flex-col items-end justify-center'>
+                                        <div className='text-xs'>Rayhan</div>
+                                        <div className='bg-green-300 w-fit p-2 rounded-md'>
+                                            This is outgoing message from S R Rayhan.
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div className='absolute bottom-1 left-0 w-full flex justify-between items-center px-2'>
+                                    <div className='w-[78%]'>
+                                        <Input className='p-2'></Input>
+                                    </div>
+                                    <div className='font-semibold bg-black py-2 px-4 rounded-md text-white cursor-pointer'>
+                                        Send
                                     </div>
                                 </div>
-                                
                             </div>
-                            <div className='absolute bottom-1 left-0 w-full flex justify-between items-center px-2'>
-                                <div className='w-[78%]'>
-                                    <Input className='p-2'></Input>
-                                </div>
-                                <div className='font-semibold bg-black py-2 px-4 rounded-md text-white cursor-pointer'>
-                                    Send
-                                </div>
-                            </div>
+                            
                         </div>
-                        
+                        <div className='border-slate-300 border-2 p-2 rounded-md shadow-sm flex flex-col justify-center items-center
+                                    sm:space-y-5
+                                    xs:space-y-1'>
+                            <h2>Task statistics</h2>
+                            <Progress
+                                percent={100}
+                                strokeColor='#abb2b9'
+                                success={{
+                                    percent: 0,
+                                }}
+                                format={() => <span className="text-md">137</span>}
+                            />
+
+                            <Progress
+                                percent={60}
+                                format={() => <span className="text-md">Ongoing</span>}
+                            />
+
+                            <Progress
+                                percent={30}
+                                success={{
+                                    percent: 30,
+                                }}
+                                format={() => <span className="text-md">Complete</span>}
+                            />
+                        </div>
                     </div>
+                    
+                    
                 </div>
                 
             </div>
