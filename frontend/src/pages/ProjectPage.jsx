@@ -482,7 +482,7 @@ const ProjectPage = () => {
                     
                     {user.role==='admin' &&
                         <div className='font-semibold bg-emerald-400 p-2 rounded-md text-black cursor-pointer' onClick={showAddManager}>
-                            Add Project Manager
+                            Add Project Supervisor
                         </div>
                     }
                     

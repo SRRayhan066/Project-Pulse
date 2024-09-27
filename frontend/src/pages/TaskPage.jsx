@@ -132,7 +132,7 @@ const TaskPage = () => {
             let ong = 0, com = 0;
 
             const formattedTaskList = formatList
-                .filter(pr => pr.assignedTo.find(assignedUser => assignedUser.email === user.email)  || user.role==='manager' || user.role==='admin')
+                
                 .map(pr => {
                     if (pr.taskStatus === 'Ongoing') ong++;
                     if (pr.taskStatus === 'Complete') com++;
